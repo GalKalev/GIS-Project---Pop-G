@@ -4,7 +4,7 @@ import NavBarLinks from './NavBarLinks'
 // Site navigation bar
 function NavBar() {
   return (
-   <NavBarLinks/>
+  <NavBarLinks/>
   )
 }
 
