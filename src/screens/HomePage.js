@@ -1,11 +1,15 @@
 import React from 'react'
-import GraphComp from '../components/GraphComp'
+import Country from '../components/Country';
+import Header from '../components/Header';
 
 const HomePage = () => {
-  return (
-    <>
-    </>
-  )
+   const text = 'Choose a country to see its details'
+    return (
+        <main style={{marginTop:'4px'}}>
+            <Header text={text} />
+             <Country/>
+        </main>
+    )
 }
 
 export default HomePage
