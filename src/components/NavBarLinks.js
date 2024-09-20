@@ -49,9 +49,8 @@ function ResponsiveAppBar() {
     };
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
-        console.log('click open user menu')
-        console.log(event.currentTarget)
         navigate('/login');
+
     };
 
     //TODO: check user before navigating
@@ -75,10 +74,13 @@ function ResponsiveAppBar() {
 
     };
 
-    const handleCloseUserMenu = () => {
+    const handleCloseUserMenu = (event) => {
         setAnchorElUser(null);
         // console.log('click close user menu')
-        // console.log(event.currentTarget)
+        const userPage = event.currentTarget.querySelector('.MuiTypography-root.MuiTypography-body1.css-1699v82-MuiTypography-root').textContent;
+        if (userPage === 'Profile') {
+            navigate('/profile')
+        }
     };
 
     return (
