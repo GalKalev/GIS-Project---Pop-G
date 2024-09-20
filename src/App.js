@@ -2,11 +2,12 @@ import './App.css';
 import NavBar from './components/NavBar';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './screens/HomePage';
-import StatsPage  from './screens/StatsPage';
+import StatsPage from './screens/StatsPage';
 import CompCountriesPage from './screens/CompCountriesPage';
 import FavoritePage from './screens/FavoritePage';
 import Login from './screens/Login';
 import Register from './screens/Register';
+import Footer from './components/Footer';
 
 
 function App() {
@@ -21,7 +22,9 @@ function App() {
       <Route path="/login" element={<Login />} /> 
       <Route path="/register" element={<Register />} />
     </Routes>
+ <Footer />
   </Router>
+
   );
 }
 
