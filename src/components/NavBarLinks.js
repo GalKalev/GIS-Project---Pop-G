@@ -49,8 +49,9 @@ function ResponsiveAppBar() {
     };
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
-        // console.log('click open user menu')
+        console.log('click open user menu')
         console.log(event.currentTarget)
+        navigate('/login');
     };
 
     //TODO: check user before navigating
