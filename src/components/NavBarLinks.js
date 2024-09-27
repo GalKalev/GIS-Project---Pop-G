@@ -35,7 +35,7 @@ const pages = [
     <StatsIcon key={'stats'} title={'Stats'} fontSize='large' style={pagesSX} />,
     <FavoriteIcon key={'favorite'} title={'Favorite'} fontSize='large' style={pagesSX} />,
 ]
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Profile', 'Logout'];
 
 function ResponsiveAppBar() {
     const navigate = useNavigate();
@@ -44,11 +44,12 @@ function ResponsiveAppBar() {
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
-        // console.log('click open nav menu')
-        console.log(event.currentTarget)
+        // console.log('click 1')
+        // console.log(event.currentTarget)
     };
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
+        // console.log('click 2')
         navigate('/login');
 
     };
@@ -56,8 +57,8 @@ function ResponsiveAppBar() {
     //TODO: check user before navigating
     const handleCloseNavMenu = (event) => {
         setAnchorElNav(null);
-
-        switch (event.currentTarget.getAttribute('aria-label')) {
+        const page = event.currentTarget.getAttribute('aria-label') || event.currentTarget.querySelector('svg')?.getAttribute('title');
+        switch (page) {
             case ('Compare Countries'):
                 navigate('/compCountries');
                 break;
@@ -68,19 +69,30 @@ function ResponsiveAppBar() {
                 navigate('/favorite');
                 break;
             default:
-                navigate('/');
+                
                 break;
         }
+
 
     };
 
     const handleCloseUserMenu = (event) => {
         setAnchorElUser(null);
-        // console.log('click close user menu')
-        const userPage = event.currentTarget.querySelector('.MuiTypography-root.MuiTypography-body1.css-1699v82-MuiTypography-root').textContent;
+        // console.log('click 4')
+        const userPage = event.currentTarget.querySelector('.MuiTypography-root.MuiTypography-body1.css-1699v82-MuiTypography-root')?.textContent;
         if (userPage === 'Profile') {
             navigate('/profile')
+        } else if (userPage === 'Logout') {
+            const confirmed = window.confirm('Are you sure you want to log out?');
+            if (confirmed) {
+                console.log('User logged out.');
+                localStorage.removeItem('authToken'); // Example: Clear authentication token
+                navigate('/', { replace: true }); // Redirect to home page
+            } else {
+                console.log('Logout canceled.');
+            }
         }
+
     };
 
     return (

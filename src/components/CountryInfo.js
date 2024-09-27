@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import '../styles/CountryInfo.css'
 import EmojiFlagsIcon from '@mui/icons-material/EmojiFlags';
 import InfoIcon from '@mui/icons-material/Info';
+import CountryAttributes from './CountryAttributes'
 
 const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) => {
 
@@ -117,132 +118,24 @@ const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) 
                     visibility: flag ? 'visible' : 'hidden',
                     display: 'flex', flexDirection: 'column',
                     alignItems: 'center',
-                    // justifyContent: 'center',
                 }}>
 
                     <Box>
                         <div>
-                            <Collapse in={showMoreInfo}
-                                sx={{ backgroundColor: '#efefef', padding: '0px 50px', borderRadius: 5, paddingBottom: 3 }}
-                            >{
-                                    <Box>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-around', textAlign: 'center' }}>
-                                            <Box
-                                                sx={infoContainerSX}
-                                            >
-                                                <EmojiFlagsIcon
-                                                    sx={iconsSX}
-                                                />
-                                                <img
-                                                    src={flag}
-                                                    alt="Flag"
-                                                    style={{ width: '150px', height: '150px', objectFit: 'contain' }} // Change values as needed
-                                                />
+                            
+                            <CountryAttributes name={name} continent={continent} name_es={name_es} name_ja={name_ja} name_tr={name_tr} flag={flag} capital={capital} languages={languages} />
 
-                                            </Box>
-                                            <Box sx={{ display: 'flex', justifyContent: 'space-around', textAlign: 'center', flexDirection: 'column' }}>
-
-                                                <Box sx={infoContainerSX}>
-                                                    <Icon sx={iconsSX}>
-                                                        <img
-                                                            src="https://cdn-icons-png.flaticon.com/128/82/82269.png"
-                                                            alt="Custom Icon"
-                                                            style={{ width: '40px', height: '40px', objectFit: 'contain' }}
-                                                        />
-                                                    </Icon>
-                                                    <div>{continent}</div>
-                                                </Box>
-                                                <Box sx={infoContainerSX}>
-                                                    <Icon sx={iconsSX}>
-                                                        <img
-                                                            src="https://cdn-icons-png.flaticon.com/512/3008/3008506.png"
-                                                            alt="Custom Icon"
-                                                            style={{ width: '40px', height: '40px', objectFit: 'contain' }}
-                                                        />
-                                                    </Icon>
-                                                    <div>{capital?.join(', ')}</div>
-                                                </Box>
-
-
-                                            </Box>
-                                        </Box>
-
-                                        <Box sx={infoContainerSX}>
-                                            <Icon sx={iconsSX}>
-                                                <img
-                                                    src="https://t3.ftcdn.net/jpg/02/07/54/36/240_F_207543651_92R9UPXVDKqi08NklMcJRbWFqYBn2Bw2.jpg"
-                                                    alt="Custom Icon"
-                                                    style={{ width: '50px', height: '50px', objectFit: 'contain' }}
-                                                />
-                                            </Icon>
-                                            <div>{languages?.join(', ')}</div>
-                                        </Box>
-
-
-
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', textAlign: 'center' }}>
-                                            <Box sx={infoContainerSX}>
-                                                <Icon sx={iconsSX}>
-                                                    <img
-                                                        src="https://cdn-icons-png.flaticon.com/128/10601/10601048.png"
-                                                        alt="Custom Icon"
-                                                        style={{ width: '50px', height: '50px', objectFit: 'contain' }}
-                                                    />
-                                                </Icon>
-                                                <div>{name_es}</div>
-                                            </Box>
-                                            <Box sx={infoContainerSX}>
-                                                <Icon sx={iconsSX}>
-                                                    <img
-                                                        src="https://cdn-icons-png.flaticon.com/128/4628/4628673.png"
-                                                        alt="Custom Icon"
-                                                        style={{ width: '50px', height: '50px', objectFit: 'contain' }}
-                                                    />
-                                                </Icon>
-                                                <div>{name_tr}</div>
-                                            </Box>
-                                            <Box sx={infoContainerSX}>
-                                                <Icon sx={iconsSX}>
-                                                    <img
-                                                        src="https://cdn-icons-png.flaticon.com/128/4628/4628642.png"
-                                                        alt="Custom Icon"
-                                                        style={{ width: '50px', height: '50px', objectFit: 'contain' }}
-                                                    />
-                                                </Icon>
-                                                <div>{name_ja}</div>
-                                            </Box>
-
-
-
-                                        </Box>
-
-                                    </Box>
-                                }</Collapse>
 
                         </div>
 
                     </Box>
-
-                    <FormControlLabel
-                        control={
-                            <IconButton
-                                size="small"
-                                aria-label="account of current user"
-                                aria-controls="menu-appbar"
-                                color="black"
-                                onClick={handleMoreInfo}
-                                sx={{ display: 'flex', alignItems: 'center' }}
-                            >
-                                MORE INFO
-                                <InfoIcon />
-
-                            </IconButton>}
-
-                    />
                     <Box>
                         GRAPH
                     </Box >
+
                 </Box>
+
+
 
 
 

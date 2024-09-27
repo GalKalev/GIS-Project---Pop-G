@@ -3,11 +3,11 @@ import Country from '../components/Country';
 import Header from '../components/Header';
 
 const HomePage = () => {
-   const text = 'Choose a country to see its details'
+    const text = 'Choose a country to see its details'
     return (
-        <main style={{marginTop:'4px'}}>
+        <main style={{ marginTop: '4px' }}>
             <Header text={text} />
-             <Country/>
+            <Country />
         </main>
     )
 }
