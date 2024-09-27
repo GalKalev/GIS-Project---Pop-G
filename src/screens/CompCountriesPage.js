@@ -2,7 +2,9 @@ import React from 'react'
 
 const CompCountriesPage = () => {
   return (
-    <div>CompCountriesPage</div>
+    <div >
+     
+    </div>
   )
 }
 

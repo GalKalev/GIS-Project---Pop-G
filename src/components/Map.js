@@ -91,16 +91,14 @@ const CountryMap = ({ geoData, setSelectedCountry, selectedCountry, position, ha
 
   return (
     <>
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative'}}>
         <div style={{
           position: 'absolute',
           left: '40%',
-          zIndex: 1000,  // Make sure it's above the map
+          zIndex: 1000,  
           display: 'flex',
           flexDirection: 'row',
           gap: '10px',
-          width: '250px',
-          // Adjust the width as needed
         }}>
           <SearchBar
             setSelectedCountry={setSelectedCountry}
