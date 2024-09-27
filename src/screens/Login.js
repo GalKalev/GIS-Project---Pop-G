@@ -98,7 +98,6 @@ const validateInputs = () => {
 
 return (
     <React.Fragment>
-    <CssBaseline enableColorScheme />
     <SignInContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
         <Typography
