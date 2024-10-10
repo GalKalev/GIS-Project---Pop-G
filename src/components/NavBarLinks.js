@@ -69,7 +69,7 @@ function ResponsiveAppBar() {
                 navigate('/favorite');
                 break;
             default:
-                
+
                 break;
         }
 

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { getCountriesList } from '../global/consts'; // Ensure this path is correct
 import '../styles/StatsPage.css';
 
 const StatsPage = () => {
@@ -14,29 +15,32 @@ const StatsPage = () => {
   });
   const [randomCountry, setRandomCountry] = useState('');
   const [randomCountryGDPData, setRandomCountryGDPData] = useState([]);
+  const [countryList, setCountryList] = useState([]);
 
-  const countryList = [
-    { name: 'Germany', code: 'DEU' },
-    { name: 'Brazil', code: 'BRA' },
-    { name: 'France', code: 'FRA' },
-    { name: 'India', code: 'IND' },
-    { name: 'Japan', code: 'JPN' },
-    { name: 'Australia', code: 'AUS' },
-    { name: 'Canada', code: 'CAN' },
-    { name: 'Russia', code: 'RUS' },
-    { name: 'Italy', code: 'ITA' },
-    { name: 'Mexico', code: 'MEX' },
-    { name: 'South Korea', code: 'KOR' },
-    { name: 'South Africa', code: 'ZAF' },
-    { name: 'Saudi Arabia', code: 'SAU' }
-  ];
+  // Fetch the country list from the GeoJSON file
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const countries = await getCountriesList();
+        const formattedCountries = countries.map(country => ({
+          name: country.properties.NAME_EN,
+          code: country.properties.WB_A3,
+        }));
+        setCountryList(formattedCountries);
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      }
+    };
+    fetchCountries();
+  }, []);
 
   // Function to pick a random country from the list
-  const getRandomCountry = () => {
+  const getRandomCountry = useCallback(() => {
     const randomIndex = Math.floor(Math.random() * countryList.length);
     return countryList[randomIndex];
-  };
+  }, [countryList]);
 
+  // Fetch GDP data for a random country
   useEffect(() => {
     const fetchRandomCountryGDP = async (countryCode) => {
       try {
@@ -47,7 +51,7 @@ const StatsPage = () => {
         const gdpArray = GDPres.data[1]
           .map(item => ({
             year: item.date,
-            gdp: item.value ? (item.value / 1e9).toFixed(2) : null // Divide by 1 billion and format to 2 decimal places
+            gdp: item.value ? (item.value / 1e9).toFixed(2) : null, // Divide by 1 billion and format to 2 decimal places
           }))
           .filter(item => item.gdp !== null)
           .reverse(); // Reverse the array to have years from smallest to largest
@@ -58,10 +62,12 @@ const StatsPage = () => {
       }
     };
 
-    const randomCountryData = getRandomCountry();
-    setRandomCountry(randomCountryData.name); // Set random country name
-    fetchRandomCountryGDP(randomCountryData.code); // Fetch GDP data for the random country
-  }, []);
+    if (countryList.length > 0) {
+      const randomCountryData = getRandomCountry();
+      setRandomCountry(randomCountryData.name); // Set random country name
+      fetchRandomCountryGDP(randomCountryData.code); // Fetch GDP data for the random country
+    }
+  }, [countryList, getRandomCountry]);
 
   return (
     <div className="stats-container">
@@ -72,7 +78,7 @@ const StatsPage = () => {
 
       {/* Most preserved country */}
       <div className="stat-card">
-        <h2 className="card-title">The Most Preserved Country</h2>
+        <h2 className="card-title">The Most Favorite Country</h2>
         <div className="country-info">
           <img src={mostPreservedCountry.flag} alt={mostPreservedCountry.name} className="flag-large" />
           <div className="country-details">
@@ -116,6 +122,4 @@ const StatsPage = () => {
   );
 };
 
-
 export default StatsPage;
-
