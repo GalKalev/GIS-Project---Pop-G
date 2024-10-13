@@ -27,8 +27,8 @@ export default function YearSlider({ setMaxYear, setMinYear, minYear, maxYear })
         }
 
         // Update parent component with new min and max year
-        setMinYear(value[0]);
-        setMaxYear(value[1]);
+        setMinYear(newValue[0]);
+        setMaxYear(newValue[1]);
     };
 
     // Sync slider values with props
@@ -37,7 +37,9 @@ export default function YearSlider({ setMaxYear, setMinYear, minYear, maxYear })
     }, [minYear, maxYear]);
 
     return (
-        <Box sx={{ width: '90%', display:'flex', alignItems:'center', flexDirection:'column' }}>
+        <Box 
+        sx={{ width: '70%', display:'flex', alignItems:'center', flexDirection:'column'}}
+        >
             <Typography
                 variant='h5'
             >

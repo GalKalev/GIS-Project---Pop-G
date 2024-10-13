@@ -69,23 +69,12 @@ export default function GraphComp(props) {
   const [rangeFrom, setRangeFrom] = useState(null)
   const [rangeTo, setRangeTo] = useState(null)
 
-  // const arrayRange = (start, stop, step) =>
-  //   Array.from(
-  //     { length: (stop - start) / step + 1 },
-  //     (value, index) => start + index * step
-  //   );
-
-  // setRangeTo(props.num2);
-  // setRangeFrom(props.num1);
-
-  // let range = arrayRange(rangeFrom, rangeTo, 1);
-  // console.log(`Array is: ${range}`)
+  /
 
   fetch('https://api.worldbank.org/v2/country/br/indicator/NY.GDP.MKTP.CD?date=2006&format=json')
     .then((response) => response.json())
     .then((data) => {
-      console.log(data)
-      console.log(data[1][0].value)
+
       setCountryGDP(data[1][0].value)
 
     })
@@ -94,8 +83,7 @@ export default function GraphComp(props) {
   fetch('https://api.worldbank.org/v2/country/br/indicator/SP.POP.TOTL?date=2006&format=json')
     .then((response) => response.json())
     .then((data) => {
-      console.log(data)
-      console.log(data[1][0].value)
+
       setCountryPop(data[1][0].value)
 
     })

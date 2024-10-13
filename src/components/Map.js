@@ -113,7 +113,7 @@ const CountryMap = ({ geoData, setSelectedCountry, selectedCountry, position, ha
           data={geoData}
           style={{
             fillColor: '#f338d1', // Default color for unclicked countries
-            // weight: 1,
+            weight: 1,
             opacity: 1,
             color: 'black',
             fillOpacity: 0.0, // Default to transparent

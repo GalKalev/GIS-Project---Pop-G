@@ -15,6 +15,9 @@ import { useNavigate } from 'react-router-dom';
 import { FavoriteIcon, StatsIcon, CompCountriesIcon } from '../global/icons';
 import Logo from './Logo';
 import { APP_COLOR } from '../global/consts';
+import { useSelector, useDispatch } from 'react-redux';
+import { userLogout } from '../features/user/userSlice';
+import {favoriteLogout} from '../features/favorites/favoritesSlice'
 
 
 // Pages style
@@ -42,56 +45,67 @@ function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
 
+    const { email, originCountry } = useSelector((store) => store.user)
+
+    const dispatch = useDispatch()
+
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
-        // console.log('click 1')
-        // console.log(event.currentTarget)
+
     };
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
-        // console.log('click 2')
-        navigate('/login');
+        if(!email){
+            navigate('/login');
+        }
+        
 
     };
 
     //TODO: check user before navigating
     const handleCloseNavMenu = (event) => {
         setAnchorElNav(null);
-        const page = event.currentTarget.getAttribute('aria-label') || event.currentTarget.querySelector('svg')?.getAttribute('title');
-        switch (page) {
-            case ('Compare Countries'):
-                navigate('/compCountries');
-                break;
-            case ('Stats'):
-                navigate('/stats');
-                break;
-            case ('Favorite'):
-                navigate('/favorite');
-                break;
-            default:
-                
-                break;
-        }
+
+        // if (email) {
+            const page = event.currentTarget.getAttribute('aria-label') || event.currentTarget.querySelector('svg')?.getAttribute('title');
+            switch (page) {
+                case ('Compare Countries'):
+                    navigate('/compCountries');
+                    break;
+                case ('Stats'):
+                    navigate('/stats');
+                    break;
+                case ('Favorite'):
+                    navigate('/favorite');
+                    break;
+                default:
+
+                    break;
+            }
+        // }
+
 
 
     };
 
     const handleCloseUserMenu = (event) => {
         setAnchorElUser(null);
-        // console.log('click 4')
-        const userPage = event.currentTarget.querySelector('.MuiTypography-root.MuiTypography-body1.css-1699v82-MuiTypography-root')?.textContent;
-        if (userPage === 'Profile') {
-            navigate('/profile')
-        } else if (userPage === 'Logout') {
-            const confirmed = window.confirm('Are you sure you want to log out?');
-            if (confirmed) {
-                console.log('User logged out.');
-                localStorage.removeItem('authToken'); // Example: Clear authentication token
-                navigate('/', { replace: true }); // Redirect to home page
-            } else {
-                console.log('Logout canceled.');
+        if (email) {
+            const userPage = event.currentTarget.querySelector('.MuiTypography-root.MuiTypography-body1.css-1699v82-MuiTypography-root')?.textContent;
+            if (userPage === 'Profile') {
+                navigate('/profile')
+            } else if (userPage === 'Logout') {
+                const confirmed = window.confirm('Are you sure you want to log out?');
+                if (confirmed) {
+                    console.log('User logged out.');
+                    // localStorage.removeItem('authToken'); // Example: Clear authentication token
+                    dispatch(userLogout())
+                    dispatch(favoriteLogout())
+                    navigate('/', { replace: true }); // Redirect to home page
+                }
             }
         }
+
 
     };
 
@@ -273,28 +287,30 @@ function ResponsiveAppBar() {
                                 <PermIdentityIcon fontSize='large' sx={[pagesSX]} />
                             </IconButton>
                         </Tooltip>
-                        <Menu
-                            sx={{ mt: '45px' }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
-                        >
-                            {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                                </MenuItem>
-                            ))}
-                        </Menu>
+                        {email &&
+                            <Menu
+                                sx={{ mt: '45px' }}
+                                id="menu-appbar"
+                                anchorEl={anchorElUser}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                open={Boolean(anchorElUser)}
+                                onClose={handleCloseUserMenu}
+                            >
+                                {settings.map((setting) => (
+                                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                        <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
+                                    </MenuItem>
+                                ))}
+                            </Menu>
+                        }
                     </Box>
                 </Toolbar>
             </Container>
