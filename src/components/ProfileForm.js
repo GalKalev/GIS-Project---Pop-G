@@ -48,8 +48,6 @@ const ProfileForm = () => {
       setUser(null); // Clear user data
       localStorage.removeItem('authToken'); // Example: Clear authentication token
       navigate('/', { replace: true }); // Redirect to home page
-    } else {
-      console.log('Logout canceled.');
     }
   };
 

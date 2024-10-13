@@ -1,18 +1,18 @@
-import { Button, Icon, IconButton } from '@mui/material'
+import { Button } from '@mui/material'
 import axios from 'axios'
-import React, { useContext, useEffect, useState } from 'react'
-import Collapse from '@mui/material/Collapse';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import React, { useState } from 'react'
 import Box from '@mui/material/Box';
 import '../styles/CountryInfo.css'
-import EmojiFlagsIcon from '@mui/icons-material/EmojiFlags';
-import InfoIcon from '@mui/icons-material/Info';
 import CountryAttributes from './CountryAttributes'
-
+import { openModal, setMessage, unsuccessful } from '../features/modal/modalSlice';
+import { useDispatch } from 'react-redux';
 const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [showMoreInfo, setShowMoreInfo] = useState(true)
+    const [GDPvalues, setGDPvalues] = useState([])
+    const [POPvalues, setPOPvalues] = useState([])
+    const [yearList, setYearList] = useState([])
     const { name,
         continent,
         wbID,
@@ -24,58 +24,36 @@ const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) 
         languages
     } = selectedCountry
 
-    const GDPvalues = []
-    const POPvalues = []
-    const yearList = []
-
-    const iconsSX = {
-        width: '50px',
-        height: '50px',
-        objectFit: 'contain',
-        position: 'absolute',
-        left: -25,
-        border: '1px solid black',
-        borderRadius: 10,
-        backgroundColor: 'white'
-    }
-    const infoContainerSX = {
-        border: '1px solid black',
-        padding: '10px 30px',
-        borderRadius: 10,
-        position: 'relative',
-        display: 'flex',
-        alignItems: 'center',
-        marginTop: 2,
-        justifyContent: 'center',
-        marginTop: 3
-    }
-
-    useEffect(() => {
-        setShowMoreInfo(false);
-    }, [selectedCountry])
+    const dispatch = useDispatch();
 
 
     const handleSubmit = async () => {
         try {
 
             setIsLoading(true)
-            GDPvalues.length = 0
-            POPvalues.length = 0
-            yearList.length = 0
-
             const GDPres = await axios.get(`https://api.worldbank.org/v2/country/${wbID}/indicator/NY.GDP.MKTP.CD?date=${minYear}:${maxYear}&per_page=300&format=json`)
             const POPres = await axios.get(`https://api.worldbank.org/v2/country/${wbID}/indicator/SP.POP.TOTL?date=${minYear}:${maxYear}&per_page=300&format=json`)
-            const country = await axios.get(`https://restcountries.com/v3.1/name/${name}?fields=languages,capital,flags`)
+            const country = await axios.get(`https://restcountries.com/v3.1/name/${name}?fields=languages,capital,flags`);
 
-            console.log(country.data[0].languages)
-            const langs = Object.values(country.data[0].languages)
+            const langs = Object.values(country?.data[0].languages)
+            const GDPList = []
+            const POPList = []
 
             GDPres.data[1].map(year => {
-                GDPvalues.push(year.value)
-            })
+                GDPList.push(year.value)
+            });
             POPres.data[1].map(year => {
-                POPvalues.push(year.value)
-            })
+                POPList.push(year.value)
+            });
+
+            const years = []
+            for (let i = minYear; i <= maxYear; i++) {
+                years.push(i)
+            }
+
+            setGDPvalues(GDPList);
+            setPOPvalues(POPList);
+            setYearList(years);
 
             setSelectedCountry({ ...selectedCountry, flag: country.data[0].flags.png, capital: country.data[0].capital, languages: langs });
 
@@ -83,15 +61,38 @@ const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) 
 
 
         } catch (error) {
-            console.error('error fetching country data: ' + error.message);
+
+            // Check if the error is from the response
+            if (error.response) {
+                // Differentiate between errors based on the API that failed
+                console.log(error.response.config.url)
+                if (error.response.config.url.includes('restcountries')) {
+                    setSelectedCountry({ ...selectedCountry, capital: ['NO DATA'], languages: ['NO DATA'], flag: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTtukk7nN95mhQJNpUX7ctV8-St1eJ_J0wdw&s' })
+                }
+
+                console.error('Error fetching country data:');
+                console.error('Status Code:', error.response.status);
+                console.error('Response Data:', error.response.data);
+                console.error('Response Headers:', error.response.headers);
+            } else if (error.request) {
+                dispatch(openModal())
+                dispatch(unsuccessful())
+                dispatch(setMessage('No response received from the server. Please check your internet connection.'));
+                console.error('Error Request:', error.request);
+            } else {
+                // Something happened in setting up the request
+                dispatch(openModal())
+                dispatch(unsuccessful())
+                dispatch(setMessage('Could not retrieve data'));
+                console.error('Error Message:', error.message);
+            }
+
+            // Display the error message to the user (replace this with your preferred method)
         } finally {
             setIsLoading(false)
         }
     }
 
-    const handleMoreInfo = () => {
-        setShowMoreInfo(!showMoreInfo);
-    }
 
     if (isLoading) {
         return (
@@ -111,27 +112,46 @@ const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) 
     } else {
         return (
             <div className='infoContainer selected'>
-                <h1 className='countryName'>{name}</h1>
 
+                <h1 className='countryName'>{name}</h1>
                 <Box sx={{
-                    height: '20%',
-                    visibility: flag ? 'visible' : 'hidden',
-                    display: 'flex', flexDirection: 'column',
-                    alignItems: 'center',
+                    display: 'grid',
+                    gridTemplateRows: '1fr auto', // Automatically size the graph and button
+                    gap: '16px'
                 }}>
 
-                    <Box>
-                        <div>
-                            
-                            <CountryAttributes name={name} continent={continent} name_es={name_es} name_ja={name_ja} name_tr={name_tr} flag={flag} capital={capital} languages={languages} />
+                    <Button
+                        variant="text"
+                        onClick={handleSubmit}
+                    >
+                        SUBMIT
+                    </Button>
+                    <Box sx={{
+                        height: '20%',
+                        visibility: flag ? 'visible' : 'hidden',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+
+                    }}>
 
 
-                        </div>
+                        <Box>
+                            <div>
+
+                                <CountryAttributes name={name} continent={continent} name_es={name_es} name_ja={name_ja} name_tr={name_tr} flag={flag} capital={capital} languages={languages} />
+
+
+                            </div>
+
+                        </Box>
+                        <Box>
+                           GRAPH
+                        </Box >
 
                     </Box>
-                    <Box>
-                        GRAPH
-                    </Box >
+
+
 
                 </Box>
 
@@ -139,13 +159,6 @@ const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) 
 
 
 
-
-                <Button
-                    variant="text"
-                    onClick={handleSubmit}
-                >
-                    SUBMIT
-                </Button>
 
             </div>
         )
