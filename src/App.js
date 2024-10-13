@@ -10,6 +10,7 @@ import ProfilePage from './screens/ProfilePage';
 import Login from './screens/Login';
 import Register from './screens/Register';
 import Footer from './components/Footer';
+import AdminPage from './screens/AdminPage'; // Adjust the path based on your folder structure
 import { useSelector } from 'react-redux';
 import ServerResModal from './components/ServerResModal';
 
@@ -18,6 +19,7 @@ const UserRoute = ({ element }) => {
 
   return email ? element : <Navigate to="/login" />;
 }
+
 
 
 function App() {
@@ -40,12 +42,10 @@ function App() {
         <Route path="/profile" element={<UserRoute element={<ProfilePage />} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
+        <Route path="/admin" element={<AdminPage />} />
       </Routes>
       <Footer />
     </Router>
-
-
   );
 }
 

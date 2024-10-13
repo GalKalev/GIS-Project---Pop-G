@@ -66,6 +66,7 @@ function ResponsiveAppBar() {
     const handleCloseNavMenu = (event) => {
         setAnchorElNav(null);
 
+
         // if (email) {
             const page = event.currentTarget.getAttribute('aria-label') || event.currentTarget.querySelector('svg')?.getAttribute('title');
             switch (page) {
@@ -83,8 +84,6 @@ function ResponsiveAppBar() {
                     break;
             }
         // }
-
-
 
     };
 

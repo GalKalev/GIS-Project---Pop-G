@@ -147,7 +147,6 @@ export default function Login() {
 
     };
 
-  
     return (
         <React.Fragment>
             <SignInContainer direction="column" justifyContent="space-between">
@@ -219,18 +218,20 @@ export default function Login() {
                             Don't have an account?
                             <span>
                                 <Link
-
-                                    variant="body2"
-                                    onClick={() => navigate('/register')}
-                                    sx={{ alignSelf: 'center' }}
-                                >
+            
+                                   variant="body2"
+                                   onClick={() => navigate('/register')}
+                                   sx={{ alignSelf: 'center' }}
+                                 >
                                     register
-                                </Link>
+                                 </Link>
                             </span>
                         </Typography>
                     </Box>
                 </Card>
-            </SignInContainer>
-        </React.Fragment>
-    );
+             </SignInContainer>
+       </React.Fragment>
+);
+
+
 }

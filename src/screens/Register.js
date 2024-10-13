@@ -61,6 +61,11 @@ const FieldWrapper = styled(Box)({
     marginBottom: '16px',
 });
 
+const countries = [
+  'Australia', 'Canada', 'India', 'USA', 'UK'
+  // Add more countries as needed
+].sort(); // Sort countries alphabetically
+
 export default function Register() {
     const [emailError, setEmailError] = React.useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = React.useState('');

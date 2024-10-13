@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate for naviga
 import '../styles/ProfileForm.css';
 import EditIcon from '@mui/icons-material/Edit';
 import ArrowRightSharpIcon from '@mui/icons-material/ArrowRightSharp';
+import AdminPage from '../screens/AdminPage'; // Adjust the path based on your folder structure
+import { AdminIcon } from '../global/icons';
 
 const ProfileForm = () => {
   const navigate = useNavigate(); // Hook for navigation
@@ -54,6 +56,10 @@ const ProfileForm = () => {
     navigate('/favorite'); // Navigate to Favorites screen
   };
 
+  const handleAdminClick = () => {
+    navigate('/admin'); // Navigate to the Admin screen
+  };
+
   // If user data is null (user is logged out), show a message or redirect
   if (!user) {
     return <h2>No user information available. Please log in.</h2>;
@@ -90,6 +96,15 @@ const ProfileForm = () => {
         >
           Go to Favorites
           <ArrowRightSharpIcon />
+        </button>
+
+        <button
+          className="admin-button"
+          onClick={handleAdminClick}
+          aria-label="Admin"
+        >
+          Admin
+          <AdminIcon />
         </button>
 
         <button className="logout-button" onClick={handleLogoutClick}>
