@@ -61,11 +61,6 @@ const FieldWrapper = styled(Box)({
     marginBottom: '16px',
 });
 
-const countries = [
-  'Australia', 'Canada', 'India', 'USA', 'UK'
-  // Add more countries as needed
-].sort(); // Sort countries alphabetically
-
 export default function Register() {
     const [emailError, setEmailError] = React.useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
@@ -347,23 +342,6 @@ export default function Register() {
                                 />
                             </FormControl>
                         </FieldWrapper>
-                        {/* <FieldWrapper>
-                            <FormControl fullWidth>
-                                <FormLabel htmlFor="originCountry">Origin Country</FormLabel>
-                                <TextField
-                                    error={originCountryError}
-                                    helperText={originCountryErrorMessage}
-                                    id="originCountry"
-                                    type="text"
-                                    name="originCountry"
-                                    placeholder="Country"
-                                    autoComplete="originCountry"
-                                    required
-                                    variant="outlined"
-                                    color={originCountryError ? 'error' : 'primary'}
-                                />
-                            </FormControl>
-                        </FieldWrapper> */}
                         <FieldWrapper>
                             <FormControl fullWidth>
                                 <FormLabel htmlFor="originCountry">Origin Country</FormLabel>
@@ -437,7 +415,6 @@ export default function Register() {
                     </Box>
                 </Card>
             </RegisterContainer>
-            {/* {showModal && <ServerResModal show={showModal} setShow={setShowModal} isSuccessful={isSuccessful} message={modalMessage} />} */}
         </React.Fragment>
     );
 }

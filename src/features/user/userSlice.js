@@ -1,10 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const url = 'https://gis-project-pop-g-backend.onrender.com/'
+// const url = 'https://gis-project-pop-g-backend.onrender.com/'
+const url = 'http://localhost:8000/'
 
 const initialState = {
+    id:null,
     email: null,
+    firstName: null,
+    lastName: null,
+    phone: null,
     isAdmin: false,
     originCountry: null,
     isLoading: false,
@@ -43,10 +48,27 @@ export const loginUser = createAsyncThunk(
         }
     })
 
+export const userInfo = createAsyncThunk(
+    '/info',
+    async (editedInfo, thunkAPI) => {
+        try {
+            const { data } = await axios.post(url + 'userInfo', editedInfo)
+            return data
+        } catch (error) {
+            console.error('error editing user info: ' + error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+
+    }
+)
+
 const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
+        setId: (state, action) => {
+            state.id = action.payload;
+        },
         setEmail: (state, action) => {
             state.email = action.payload;
         },
@@ -55,6 +77,15 @@ const userSlice = createSlice({
         },
         setIsAdmin: (state, action) => {
             state.isAdmin = action.payload;
+        },
+        setFirstName: (state, action) => {
+            state.firstName = action.payload;
+        },
+        setLastName: (state, action) => {
+            state.lastName = action.payload;
+        },
+        setPhone: (state, action) => {
+            state.phone = action.payload;
         },
         userLogout: (state, action) => {
             state.isAdmin = false;
@@ -96,9 +127,26 @@ const userSlice = createSlice({
                 state.isLoading = false;
                 state.error = action.payload; // <-- error response
             })
+
+            .addCase(userInfo.pending, (state) => {
+                console.log('user info pending')
+                state.isLoading = true;
+            })
+            .addCase(userInfo.fulfilled, (state, action) => {
+                console.log('user info fulfilled')
+                console.log(action)
+                state.isLoading = false;
+
+            })
+            .addCase(userInfo.rejected, (state, action) => {
+                console.log('user info rejected')
+                console.log(action)
+                state.isLoading = false;
+                state.error = action.payload; // <-- error response
+            })
     },
 })
 
-export const { setEmail, setOriginCountry, setIsAdmin, userLogout } = userSlice.actions;
+export const {setId, setEmail, setOriginCountry, setIsAdmin, setFirstName, setLastName, setPhone, userLogout } = userSlice.actions;
 
 export default userSlice.reducer;

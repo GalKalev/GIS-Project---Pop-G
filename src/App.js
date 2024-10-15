@@ -23,7 +23,6 @@ const UserRoute = ({ element }) => {
 
 
 function App() {
-  // const {isOpen} = useSelector((store) => store.modal)
   const { isLoading } = useSelector((store) => store.user)
   if (isLoading) {
     return (<div>
@@ -40,9 +39,9 @@ function App() {
         <Route path="/stats" element={<UserRoute element={<StatsPage />} />} />
         <Route path="/favorite" element={<UserRoute element={<FavoritePage />} />} />
         <Route path="/profile" element={<UserRoute element={<ProfilePage />} />} />
+        <Route path="/admin" element={<UserRoute element={<AdminPage />}/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/admin" element={<AdminPage />} />
       </Routes>
       <Footer />
     </Router>

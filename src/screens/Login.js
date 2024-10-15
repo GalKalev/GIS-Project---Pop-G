@@ -12,9 +12,9 @@ import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
-import { loginUser, setEmail, setOriginCountry, setIsAdmin } from '../features/user/userSlice';
+import { loginUser, setEmail, setOriginCountry, setIsAdmin, setLastName, setFirstName, setPhone, setId } from '../features/user/userSlice';
 import { openModal, closeModal, successful, unsuccessful, setMessage } from '../features/modal/modalSlice';
-import { setBasic, setComp, setId } from '../features/favorites/favoritesSlice'
+import { setBasic, setComp } from '../features/favorites/favoritesSlice'
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
@@ -118,9 +118,12 @@ export default function Login() {
 
                         // Set other user info
                         dispatch(setEmail(user.email));
-                        dispatch(setIsAdmin(res.payload.isAdmin));
-                        dispatch(setOriginCountry(res.payload.originCountry));
-                        // dispatch(setId(res.payload.favorites.id))
+                        dispatch(setId(res.payload.user.id))
+                        dispatch(setIsAdmin(res.payload.user.isAdmin));
+                        dispatch(setOriginCountry(res.payload.user.originCountry));
+                        dispatch(setLastName(res.payload.user.lastName))
+                        dispatch(setFirstName(res.payload.user.firstName))
+                        dispatch(setPhone(res.payload.user.phone))
                         dispatch(setBasic(res.payload.basicFavorites))
                         dispatch(setComp(res.payload.compareFavorites))
 

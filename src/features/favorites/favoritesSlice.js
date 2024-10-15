@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const url = 'https://gis-project-pop-g-backend.onrender.com/'
+// const url = 'https://gis-project-pop-g-backend.onrender.com/'
+const url = 'http://localhost:8000/'
 
 const initialState = {
     basic: null,
@@ -35,9 +36,9 @@ export const deleteBasicFavorite = createAsyncThunk(
     '/favorites/deleteBasic',
     async (favorite, thunkAPI) => {
         try {
-            const { email, countryWBId, minYear, maxYear } = favorite;
+            const { id, countryWBId, minYear, maxYear } = favorite;
             const { data } = await axios.delete(`${url}favorites/basic`, {
-                params: { email, countryWBId, minYear, maxYear }
+                params: { id, countryWBId, minYear, maxYear }
             });
 
             return data;

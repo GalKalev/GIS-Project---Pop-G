@@ -10,7 +10,7 @@
     width: 80%;
 }
 
-h1 {
+.profile-header {
     text-align: center;
     margin-bottom: 20px;
     color: #333;
@@ -38,7 +38,7 @@ h1 {
     color: #333;
 }
 
-input {
+.user-input {
     width: 100%;
     padding: 8px;
     border: 1px solid #ccc;
@@ -47,7 +47,7 @@ input {
     box-sizing: border-box;
 }
 
-button {
+.btn {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -58,11 +58,11 @@ button {
     transition: background-color 0.3s;
 }
 
-button svg {
+.btn svg {
     margin-right: 8px;
 }
 
-button:hover {
+.btn:hover {
     opacity: 0.9;
 }
 
@@ -75,7 +75,6 @@ button:hover {
 .edit-buttons-container {
     display: flex;
     gap: 10px;
-    /* Adds space between Save and Cancel buttons */
 }
 
 .go-favorite-button {
@@ -136,9 +135,7 @@ button:hover {
 .save-button,
 .cancel-button {
     padding: 10px 15px;
-    /* Add padding */
     margin-right: 10px;
-    /* Space between the buttons */
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -146,18 +143,26 @@ button:hover {
 
 .save-button {
     background-color: #4caf50;
-    /* Green for Save */
     color: white;
+}
+
+.save-button:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
 }
 
 .cancel-button {
     background-color: #f44336;
-    /* Red for Cancel */
     color: white;
 }
 
 .save-button:hover,
 .cancel-button:hover {
     opacity: 0.9;
-    /* Dim effect on hover */
+}
+
+.error-message{
+    color:'red';
+    font-size: 17;
 }
