@@ -31,7 +31,7 @@ const Country = () => {
     const [isFavored, setIsFavored] = useState(false)
 
     const { basic } = useSelector((store) => store.favorites)
-    const {email} = useSelector((store) => store.user)
+    const {id} = useSelector((store) => store.user)
     const navigate = useNavigate()
     const dispatch = useDispatch();
 
@@ -55,10 +55,10 @@ const Country = () => {
 
     const handleFavorite = async () => {
 
-        if (email) {
+        if (id) {
 
             const countryWBId = selectedCountry.wbID;
-            const currBasic = { email, countryWBId, minYear, maxYear}
+            const currBasic = { id, countryWBId, minYear, maxYear}
             if (!isFavored) {
                 try {
                     const res = await dispatch(addBasicFavorite(currBasic));
