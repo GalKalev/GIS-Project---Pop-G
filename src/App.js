@@ -10,16 +10,24 @@ import ProfilePage from './screens/ProfilePage';
 import Login from './screens/Login';
 import Register from './screens/Register';
 import Footer from './components/Footer';
-import AdminPage from './screens/AdminPage'; // Adjust the path based on your folder structure
+import AdminPage from './screens/AdminPage';
 import { useSelector } from 'react-redux';
 import ServerResModal from './components/ServerResModal';
 
-const UserRoute = ({ element }) => {
-  const { email } = useSelector((store) => store.user)
 
-  return email ? element : <Navigate to="/login" />;
+// Check if user logged in to access this routes
+const UserRoute = ({ element }) => {
+  const { id } = useSelector((store) => store.user)
+
+  return id ? element : <Navigate to="/login" />;
 }
 
+// Checks if the user is admin to enter this route
+const AdminRoute = ({ element }) => {
+  const { isAdmin } = useSelector((store) => store.user)
+
+  return isAdmin ? element : <Navigate to="/" />;
+}
 
 
 function App() {
@@ -39,7 +47,7 @@ function App() {
         <Route path="/stats" element={<UserRoute element={<StatsPage />} />} />
         <Route path="/favorite" element={<UserRoute element={<FavoritePage />} />} />
         <Route path="/profile" element={<UserRoute element={<ProfilePage />} />} />
-        <Route path="/admin" element={<UserRoute element={<AdminPage />}/>} />
+        <Route path="/admin" element={<AdminRoute element={<AdminPage />}/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>

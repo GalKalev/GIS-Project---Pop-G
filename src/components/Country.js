@@ -43,7 +43,7 @@ const Country = () => {
     const checkFavorite = () => {
         let isCurrentFavored = false
         basic?.map((b) => {
-            if (b.countryWBId === selectedCountry.wbID && b.minYear === minYear && b.maxYear === maxYear) {
+            if (b.country === selectedCountry.name && b.minYear === minYear && b.maxYear === maxYear) {
                 console.log('belong to favorites');
                 isCurrentFavored = true;
                 return;
@@ -57,14 +57,14 @@ const Country = () => {
 
         if (id) {
 
-            const countryWBId = selectedCountry.wbID;
-            const currBasic = { id, countryWBId, minYear, maxYear}
+            const country = selectedCountry.name;
+            const currBasic = { id, country, minYear, maxYear}
             if (!isFavored) {
                 try {
                     const res = await dispatch(addBasicFavorite(currBasic));
 
                     if (res.type === "/favorites/addBasic/fulfilled") {
-                        dispatch(addBasic({ maxYear,  minYear, countryWBId }));
+                        dispatch(addBasic({ maxYear,  minYear, country }));
                     } else {
                         throw Error()
                     }
@@ -80,8 +80,7 @@ const Country = () => {
                     const res = await dispatch(deleteBasicFavorite(currBasic))
 
                     if (res.type === "/favorites/deleteBasic/fulfilled") {
-                        dispatch(deleteBasic({ maxYear: maxYear, minYear: minYear, countryWBId: countryWBId }));
-                        // setIsFavored(true)
+                        dispatch(deleteBasic({ maxYear: maxYear, minYear: minYear, country: country }));
                     } else {
                         throw Error()
                     }

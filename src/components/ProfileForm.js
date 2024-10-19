@@ -10,6 +10,7 @@ import { setEmail, setFirstName, setLastName, setOriginCountry, setPhone, userIn
 import { favoriteLogout } from '../features/favorites/favoritesSlice';
 import _ from 'lodash';
 import { getCountriesList } from '../global/consts';
+import { persistor } from '../store';
 
 const ProfileForm = () => {
   const navigate = useNavigate(); // Hook for navigation
@@ -116,6 +117,7 @@ const ProfileForm = () => {
       console.log('User logged out.');
       dispatch(userLogout())
       dispatch(favoriteLogout())
+      persistor.purge()
       navigate('/', { replace: true }); // Redirect to home page
     }
   };

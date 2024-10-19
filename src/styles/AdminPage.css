@@ -5,7 +5,7 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+.admin-panel-header {
     color: #333;
     font-size: 2.5em;
     margin-bottom: 20px;
@@ -20,7 +20,7 @@ h1 {
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 }
 
-.admin-section h2 {
+.admin-section .lists-header {
     color: #444;
     font-size: 1.75em;
     margin-bottom: 15px;
@@ -35,7 +35,10 @@ h1 {
 .admin-table td {
     padding: 12px 15px;
     border: 1px solid #ddd;
-    text-align: left;
+}
+
+.user-table {
+    text-align: center;
 }
 
 .admin-table th {
@@ -48,19 +51,19 @@ h1 {
     background-color: #f1f1f1;
 }
 
-.admin-table button {
+.admin-table .btn {
     padding: 8px 12px;
     border: none;
     border-radius: 4px;
-    background-color: #bdbcbc;
-    color: white;
+    /* background-color: #bdbcbc; */
+    /* color: white; */
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.admin-table button:hover {
+/* .admin-table .btn:hover {
     background-color: #b4abb3a3;
-}
+} */
 
 .modal {
     display: flex;
@@ -84,16 +87,12 @@ h1 {
     position: relative;
 }
 
-.modal-content h2 {
+.modal-content .list-header {
     margin-top: 0;
 }
 
-.modal-content label {
-    display: block;
-    margin: 15px 0 5px;
-}
 
-.modal-content input {
+.modal-content .search-bar {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
@@ -113,18 +112,16 @@ h1 {
     color: #333;
 }
 
-.admin-table button {
+/* .admin-table .btn { 
     padding: 8px 10px;
-    /* Increased padding */
     margin: 0 5px;
-    /* Added margin for spacing between buttons */
     border: none;
     border-radius: 4px;
     background-color: #bdbcbc;
     color: white;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
+} */
 
 .search-bar-container {
     display: flex;
@@ -147,4 +144,159 @@ h1 {
     /* Round edges */
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     /* Slight shadow for depth */
+}
+
+.add-country-container {
+    display: flex;
+}
+
+.country-list {
+    max-height: 200px;
+    /* Set a maximum height for the list */
+    overflow-y: scroll;
+    /* Enable vertical scrolling */
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    /* Remove bullet points */
+    border: 1px solid #ccc;
+    /* Optional: add a border around the list */
+    border-radius: 4px;
+    /* Optional: round the corners */
+}
+
+.country-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    /* Optional: separate list items with a border */
+}
+
+.country-list li:hover {
+    background-color: #f0f0f0;
+    /* Optional: change background on hover */
+}
+
+/* Optional: Customize scroll bar */
+.country-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.country-list::-webkit-scrollbar-thumb {
+    background-color: #888;
+    /* Color of the scrollbar */
+    border-radius: 10px;
+}
+
+.country-list::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+    /* Change color on hover */
+}
+
+.block-td {
+    text-align: center;
+}
+
+.countries-table-body {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.countries-table-body thead,
+.countries-table-body tbody {
+    display: block;
+}
+
+.countries-table-body thead {
+    width: 100%;
+}
+
+.countries-table-body tbody {
+    height: 250px; /* Set the height of the table body */
+    overflow-y: auto; /* Enable vertical scroll */
+    overflow-x: hidden; /* Hide the horizontal scroll */
+}
+
+.countries-table-body thead th,
+.countries-table-body tbody td {
+    width: 50%; /* Adjust width to fit table (100% / 2 columns) */
+    padding: 12px 15px;
+    box-sizing: border-box; /* Ensures padding is included in the width */
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+/* Synchronizing header and body */
+.countries-table-body thead th {
+    background-color: rgb(207, 159, 207);
+    color: white;
+    font-weight: bold;
+    position: sticky; /* Keeps header fixed while scrolling */
+    top: 0;
+}
+
+.countries-table-body tr {
+    display: flex; /* Makes the rows and cells flexible to align properly */
+}
+
+.countries-table-body tbody td {
+    display: block; /* Ensures the table body rows align with the header */
+    text-align: center;
+}
+
+/* Optional hover effect for the table body rows */
+.countries-table-body tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* General table styles */
+.user-table-body {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.user-table-body thead, 
+.user-table-body tbody {
+    display: block;
+}
+
+.user-table-body thead {
+    width: 100%;
+}
+
+.user-table-body tbody {
+    height: 250px;  /* Set the height of the table body */
+    overflow-y: auto;  /* Enable vertical scroll */
+    overflow-x: hidden;  /* Hide the horizontal scroll */
+}
+
+.user-table-body thead th,
+.user-table-body tbody td {
+    width: 16.66%; /* Adjust width to fit table (100% / 6 columns) */
+    padding: 12px 15px;
+    box-sizing: border-box; /* Ensures padding is included in the width */
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+/* Synchronizing header and body */
+.user-table-body thead th {
+    background-color: rgb(207, 159, 207);
+    color: white;
+    font-weight: bold;
+    position: sticky; /* Keeps header fixed while scrolling */
+    top: 0;
+}
+
+.user-table-body tr {
+    display: flex; /* Makes the rows and cells flexible to align properly */
+}
+
+.user-table-body tbody td {
+    display: block; /* Ensures the table body rows align with the header */
+    text-align: center;
+}
+
+/* Optional hover effect for the table body rows */
+.user-table-body tbody tr:hover {
+    background-color: #f1f1f1;
 }

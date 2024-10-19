@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { URL } from "../../global/consts";
 import axios from "axios";
-
-// const url = 'https://gis-project-pop-g-backend.onrender.com/'
-const url = 'http://localhost:8000/'
 
 const initialState = {
     basic: null,
@@ -20,7 +18,7 @@ export const addBasicFavorite = createAsyncThunk(
         try {
             console.log(favorite.minYear)
 
-            const { data } = await axios.post(`${url}favorites/basic`, favorite);
+            const { data } = await axios.post(`${URL}favorites/basic`, favorite);
 
             return data;
         } catch (error) {
@@ -36,9 +34,9 @@ export const deleteBasicFavorite = createAsyncThunk(
     '/favorites/deleteBasic',
     async (favorite, thunkAPI) => {
         try {
-            const { id, countryWBId, minYear, maxYear } = favorite;
-            const { data } = await axios.delete(`${url}favorites/basic`, {
-                params: { id, countryWBId, minYear, maxYear }
+            const { id, country, minYear, maxYear } = favorite;
+            const { data } = await axios.delete(`${URL}favorites/basic`, {
+                params: { id, country, minYear, maxYear }
             });
 
             return data;
@@ -47,8 +45,6 @@ export const deleteBasicFavorite = createAsyncThunk(
         }
     }
 )
-
-
 
 
 const favoritesSlice = createSlice({
@@ -69,7 +65,7 @@ const favoritesSlice = createSlice({
                 ...state,
                 basic: state.basic.filter(
                     (basicFav) =>
-                        !(basicFav.countryWBId === action.payload.countryWBId &&
+                        !(basicFav.country === action.payload.country &&
                             basicFav.minYear === action.payload.minYear &&
                             basicFav.maxYear === action.payload.maxYear)
                 )
