@@ -1,98 +1,171 @@
 import React, { useEffect, useState } from 'react';
 import { getCountriesList } from '../global/consts'; // Import the function to fetch countries
 import '../styles/AdminPage.css';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import BlockIcon from '@mui/icons-material/Block';
+import { useDispatch } from 'react-redux';
+import { openModal, setMessage, successful, unsuccessful } from '../features/modal/modalSlice';
+import { URL } from '../global/consts';
+import axios from 'axios';
+import { IconButton } from '@mui/material';
+
 
 const AdminPage = () => {
-    const [countries, setCountries] = useState([]); // State for storing country list
-    const [users, setUsers] = useState([]); // State for storing user list
-    const [blockedCountries, setBlockedCountries] = useState([]); // State for storing blocked countries
-    const [selectedCountry, setSelectedCountry] = useState(null); // State for storing selected country info for modal
-    const [userToEdit, setUserToEdit] = useState(null); // State for storing user to edit
-    const [newUser, setNewUser] = useState({ name: '', lastName: '', email: '', phone: '' }); // State for new user input
-    const [countrySearchQuery, setCountrySearchQuery] = useState(''); // State for country search query
-    const [userSearchQuery, setUserSearchQuery] = useState(''); // State for user search query
+    const [countries, setCountries] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [blockedCountries, setBlockedCountries] = useState([]);
+    const [selectedCountry, setSelectedCountry] = useState('')
+    const [countrySearchQuery, setCountrySearchQuery] = useState('');
+    const [userSearchQuery, setUserSearchQuery] = useState('');
+    const [filteredCountries, setFilteredCountries] = useState([]);
+    const [filteredBlockedCountries, setFilteredBlockedCountries] = useState([]);
+
+    const dispatch = useDispatch();
+
+    const fetchCountries = async () => {
+        try {
+            const countriesList = await getCountriesList();
+            const countriesName = countriesList.map(country => country.properties.NAME_EN);
+            // setCountries(countriesName.sort()); 
+
+            const blockedResponse = await axios.get(`${URL}admin/countries`);
+            const blockedList = blockedResponse.data;
+            console.log(blockedList[0].country);
+
+            setBlockedCountries(blockedList.sort());
+            setFilteredBlockedCountries(blockedList.sort())
+
+            const blockedCountryNames = blockedList.map(item => item.country);
+
+            // Filter out blocked countries from the countriesName
+            if (blockedList.length > 0) {
+                const filtered = countriesName.filter(country => {
+                    return (!blockedCountryNames.includes(country))
+                } // Compare with country names directly
+                );
+                setCountries(filtered.sort()); // Set the filtered countries
+                setFilteredCountries(filtered.sort()); // Set the filtered countries
+            } else {
+                setFilteredCountries(countriesName); // If no blocked countries, show all
+                setCountries(countriesName); // If no blocked countries, show all
+            }
+        } catch (error) {
+            console.error('Error fetching countries:', error);
+        }
+    };
+
 
     // Fetch the country list when the component mounts
     useEffect(() => {
-        const fetchCountries = async () => {
-            try {
-                const countries = await getCountriesList();
-                const formattedCountries = countries.map(country => ({
-                    name: country.properties.NAME_EN,
-                    code: country.properties.WB_A3,
-                }));
-                setCountries(formattedCountries); // Use setCountries here
-            } catch (error) {
-                console.error('Error fetching countries:', error);
-            }
-        };
+
         fetchCountries();
     }, []);
 
-    // Mock function to fetch users (replace this with actual API call)
-    const fetchUsers = async () => {
-        // Simulate a delay to fetch users
-        return [
-            { id: 1, name: 'Alice', lastName: 'Smith', email: 'alice@example.com', phone: '123-456-7890', isAdmin: 'yes' },
-            { id: 2, name: 'Bob', lastName: 'Johnson', email: 'bob@example.com', phone: '098-765-4321', isAdmin: 'no' },
-            // Add more mock users
-        ];
-    };
+    const loadUsers = async () => {
+        try {
+            const res = await axios.get(`${URL}admin/users`);
+            if (res.status === 200) {
+                setUsers(res.data);
+            } else {
+                throw Error('fetching users failed')
+            }
 
+        } catch (error) {
+            console.error("Failed to fetch users", error);
+            dispatch(unsuccessful());
+            dispatch(setMessage('Fetching users failed. Please try again.'));
+            dispatch(openModal());
+        }
+
+    };
     // Fetch users when the component mounts
     useEffect(() => {
-        const loadUsers = async () => {
-            const userList = await fetchUsers();
-            setUsers(userList);
-        };
-
         loadUsers();
     }, []);
 
     // Function to block a country and show its information
-    const blockCountry = (country) => {
-        setBlockedCountries((prev) => [...prev, country.code]); // Add the country code to the blocked list
-        setSelectedCountry(country); // Set the selected country to show in the modal
+    const blockCountry = async (country) => {
+        try {
+            console.log(country)
+            const res = await axios.post(`${URL}admin/countries/add`, { country })
+
+            if (res.status === 200) {
+                fetchCountries();
+            } else {
+                throw Error('Error blocking country')
+            }
+
+        } catch (error) {
+            console.error("Failed blocking country", error);
+            dispatch(unsuccessful());
+            dispatch(setMessage('Blocking country failed. Please try again.'));
+            dispatch(openModal());
+        }
+
     };
 
-    // Function to handle the selection from the search bar
-    const handleSearchSelection = (countryName) => {
-        const country = countries.find(c => c.name === countryName);
-        blockCountry(country);
-    };
+    const unblockCountry = async (country) => {
+        try {
+            console.log(country)
+            const id = country.id
+            const res = await axios.delete(`${URL}admin/countries/delete`, { params: { id } })
 
-    // Function to close the modal
-    const closeModal = () => {
-        setSelectedCountry(null); // Reset selected country
-    };
+            if (res.status === 200) {
+                fetchCountries();
+            } else {
+                throw Error('Error unblocking country')
+            }
 
-    // Function to remove a user
-    const removeUser = (id) => {
-        setUsers(users.filter(user => user.id !== id));
+        } catch (error) {
+            console.error("Failed unblocking country", error);
+            dispatch(unsuccessful());
+            dispatch(setMessage('Unblocking country failed. Please try again.'));
+            dispatch(openModal());
+        }
+
     };
 
     // Function to open the update modal
-    const openUpdateModal = (user) => {
-        setUserToEdit(user);
-        setNewUser({ name: user.name, lastName: user.lastName, email: user.email, phone: user.phone }); // Pre-fill the form with the user's current details
+    const updateUserAdmin = async (user) => {
+        try {
+            let res;
+            if (user.isAdmin) {
+                res = await axios.post(`${URL}admin/users/update`, { id: user.id, isAdmin: false })
+            } else {
+                res = await axios.post(`${URL}admin/update`, { id: user.id, isAdmin: true })
+            }
+            if (res.status === 200) {
+                dispatch(successful());
+                dispatch(setMessage('User admin status updated successfully'));
+                dispatch(openModal())
+                loadUsers()
+
+            } else {
+                dispatch(unsuccessful());
+                dispatch(setMessage('Error updating user admin status. Please try again.'));
+                dispatch(openModal());
+            }
+        } catch (error) {
+            console.error("Failed to fetch users", error);
+        }
+
+
     };
 
-    // Function to update user
-    const updateUser = () => {
-        setUsers(users.map(user =>
-            user.id === userToEdit.id ? { ...user, name: newUser.name, lastName: newUser.lastName, email: newUser.email, phone: newUser.phone } : user
-        ));
-        closeUpdateModal(); // Close the update modal after updating
-    };
 
-    // Function to close the update modal
-    const closeUpdateModal = () => {
-        setUserToEdit(null); // Reset the user to edit
-    };
 
     // Function to handle country search query change
     const handleCountrySearchChange = (e) => {
-        setCountrySearchQuery(e.target.value);
+        const query = e.target.value.toLowerCase();
+        setCountrySearchQuery(query);
+
+        // Filter countries based on the search query
+        const filtered = countries.filter(country => country.toLowerCase().includes(query));
+        setFilteredCountries(filtered);
+
+        // Filter blocked countries based on the search query
+        const filteredBlocked = blockedCountries.filter(country => country.country.toLowerCase().includes(query));
+        setFilteredBlockedCountries(filteredBlocked);
     };
 
     // Function to handle user search query change
@@ -102,11 +175,11 @@ const AdminPage = () => {
 
     return (
         <div className="admin-container">
-            <h1>Admin Dashboard</h1>
+            <h1 className='admin-panel-header'>Admin Dashboard</h1>
 
             {/* Users list */}
             <div className="admin-section">
-                <h2>List of Users</h2>
+                <h2 className='lists-header'>List of Users</h2>
                 <div className="search-bar-container"> {/* Wrap the input in this div */}
                     <input
                         type="text"
@@ -116,37 +189,55 @@ const AdminPage = () => {
                         onChange={handleUserSearchChange} // Call the function on input change
                     />
                 </div>
-                <table className="admin-table">
+                <table className="admin-table user-table-body">
                     <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Last Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>isAdmin</th>
-                            <th>Actions</th>
+                        <tr className='user-table'>
+                            <th className='user-table'>ID</th>
+                            <th className='user-table'>Name</th>
+                            <th className='user-table'>Last Name</th>
+                            <th className='user-table'>Email</th>
+                            <th className='user-table'>Phone</th>
+                            <th className='user-table'>Admin</th>
                         </tr>
                     </thead>
                     <tbody>
                         {users
                             .filter(user =>
-                                user.name.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
+                                user.firstName.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
                                 user.lastName.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
                                 user.email.toLowerCase().includes(userSearchQuery.toLowerCase())
                             )
                             .map(user => (
                                 <tr key={user.id}>
-                                    <td>{user.id}</td>
-                                    <td>{user.name}</td>
-                                    <td>{user.lastName}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.phone}</td>
-                                    <td>{user.isAdmin}</td>
-                                    <td>
-                                        <button onClick={() => removeUser(user.id)}>Remove</button>
-                                        <span style={{ margin: '0 10px' }}></span>
-                                        <button onClick={() => openUpdateModal(user)}>Edit</button>
+                                    <td style={{ textAlign: 'center' }}>{user.id}</td>
+                                    <td style={{ textAlign: 'center' }}>{user.firstName}</td>
+                                    <td style={{ textAlign: 'center' }}>{user.lastName}</td>
+                                    <td style={{ textAlign: 'center' }}>{user.email}</td>
+                                    <td style={{ textAlign: 'center' }}>{user.phone}</td>
+                                    <td style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center' }}>{user.isAdmin ? ('Yes') : ("No")}
+                                        <IconButton className='btn admin-btn'
+                                            sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                minWidth: 60,
+                                                textAlign: 'center',
+                                                padding: 2,
+                                                '& svg': {
+                                                    margin: 'auto',
+                                                    display: 'block',
+                                                },
+                                            }}
+                                            onClick={() => updateUserAdmin(user)}>
+                                            <AdminPanelSettingsIcon
+                                                sx={{
+                                                    color: user.isAdmin ? 'green' : 'white',
+                                                    backgroundColor: 'lightgray',
+                                                    borderRadius: 20,
+                                                    padding: 1,
+                                                    marginRight: 4,
+                                                }} />
+                                        </IconButton>
                                     </td>
                                 </tr>
                             ))}
@@ -156,93 +247,57 @@ const AdminPage = () => {
 
             {/* Countries list */}
             <div className="admin-section">
-                <h2>List of Countries</h2>
-                <div className="search-bar-container"> {/* Wrap the input in this div */}
-                    <input
-                        type="text"
-                        className="search-bar" // Add this class for styling
-                        placeholder="Search countries..."
-                        value={countrySearchQuery}
-                        onChange={handleCountrySearchChange} // Call the function on input change
-                    />
+                <h2 className='lists-header'>List of Countries</h2>
+                <div className='add-country-container'>
+                    <div className="search-bar-container"> {/* Wrap the input in this div */}
+                        <input
+                            type="text"
+                            className="search-bar" // Add this class for styling
+                            placeholder="Search countries..."
+                            value={countrySearchQuery}
+                            onChange={handleCountrySearchChange} // Call the function on input change
+                        />
+                    </div>
+
                 </div>
-                <table className="admin-table">
+
+                <table className="admin-table countries-table-body">
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>ISO Code</th>
-                            <th>Action</th>
+                            <th>Block</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {countries
-                            .filter(country =>
-                                !blockedCountries.includes(country.code) &&
-                                country.name.toLowerCase().includes(countrySearchQuery.toLowerCase()) // Filter based on search query
-                            )
-                            .map((country, index) => (
-                                <tr key={index}>
-                                    <td>{country.name}</td>
-                                    <td>{country.code}</td>
-                                    <td>
-                                        <button onClick={() => blockCountry(country)}>Block</button>
+                    <tbody >
+                        {/* Blocked Countries Section */}
+                        {blockedCountries.length > 0 && (
+                            filteredBlockedCountries.map((country, index) => (
+                                <tr key={`blocked-${index}`}>
+                                    <td>{country.country}</td>
+                                    <td className='block-td'>
+                                        <IconButton onClick={() => unblockCountry(country)}>
+                                            <BlockIcon sx={{ color: 'red' }} />
+                                        </IconButton>
                                     </td>
                                 </tr>
-                            ))}
+                            ))
+                        )}
+                        {filteredCountries.length > 0 && (
+                            filteredCountries.map((country, index) => (
+                                <tr key={`filtered-${index}`}>
+                                    <td>{country}</td>
+                                    <td className='block-td' style={{}}>
+                                        <IconButton onClick={() => blockCountry(country)}>
+                                            <BlockIcon />
+                                        </IconButton>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>
 
-            {/* Modal to display blocked country information */}
-            {
-                selectedCountry && (
-                    <div className="modal">
-                        <div className="modal-content">
-                            <span className="close" onClick={closeModal}>&times;</span>
-                            <h2>Blocked Country</h2>
-                            <p>Name: {selectedCountry.name}</p>
-                            <p>Code: {selectedCountry.code}</p>
-                        </div>
-                    </div>
-                )
-            }
-
-            {/* Modal to update user information */}
-            {
-                userToEdit && (
-                    <div className="modal">
-                        <div className="modal-content">
-                            <span className="close" onClick={closeUpdateModal}>&times;</span>
-                            <h2>Update User</h2>
-                            <label>Name:</label>
-                            <input
-                                type="text"
-                                value={newUser.name}
-                                onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-                            />
-                            <label>Last Name:</label>
-                            <input
-                                type="text"
-                                value={newUser.lastName}
-                                onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })}
-                            />
-                            <label>Email:</label>
-                            <input
-                                type="email"
-                                value={newUser.email}
-                                onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                            />
-                            <label>Phone:</label>
-                            <input
-                                type="tel"
-                                value={newUser.phone}
-                                onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
-                            />
-                            <button onClick={updateUser}>Save</button>
-                        </div>
-                    </div>
-                )
-            }
         </div >
     );
 };

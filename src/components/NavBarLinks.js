@@ -18,6 +18,7 @@ import { APP_COLOR } from '../global/consts';
 import { useSelector, useDispatch } from 'react-redux';
 import { userLogout } from '../features/user/userSlice';
 import {favoriteLogout} from '../features/favorites/favoritesSlice'
+import { persistor } from '../store';
 
 
 // Pages style
@@ -100,6 +101,7 @@ function ResponsiveAppBar() {
                     // localStorage.removeItem('authToken'); // Example: Clear authentication token
                     dispatch(userLogout())
                     dispatch(favoriteLogout())
+                    persistor.purge()
                     navigate('/', { replace: true }); // Redirect to home page
                 }
             }

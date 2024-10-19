@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { URL } from "../../global/consts";
 import axios from "axios";
-
-// const url = 'https://gis-project-pop-g-backend.onrender.com/'
-const url = 'http://localhost:8000/'
 
 const initialState = {
     id:null,
@@ -26,8 +24,7 @@ export const registerUser = createAsyncThunk(
                     'Content-Type': 'application/json'
                 }
             }
-            // const body = JSON.stringify(newUser);
-            const { data } = await axios.post(url + 'register', newUser);
+            const { data } = await axios.post(URL + 'register', newUser);
             return data;
         } catch (error) {
             console.error('error registering user slice: ' + error);
@@ -40,7 +37,7 @@ export const loginUser = createAsyncThunk(
     "/login",
     async (user, thunkAPI) => {
         try {
-            const { data } = await axios.post(url + 'login', user)
+            const { data } = await axios.post(URL + 'login', user)
             return data;
         } catch (error) {
             console.error('error login user slice: ' + error);
@@ -52,7 +49,7 @@ export const userInfo = createAsyncThunk(
     '/info',
     async (editedInfo, thunkAPI) => {
         try {
-            const { data } = await axios.post(url + 'userInfo', editedInfo)
+            const { data } = await axios.post(URL + 'userInfo', editedInfo)
             return data
         } catch (error) {
             console.error('error editing user info: ' + error);
@@ -88,13 +85,20 @@ const userSlice = createSlice({
             state.phone = action.payload;
         },
         userLogout: (state, action) => {
-            state.isAdmin = false;
-            state.email = null;
-            state.originCountry = null;
+            state.id=null;
+            state.email= null;
+            state.firstName= null;
+            state.lastName= null;
+            state.phone= null;
+            state.isAdmin= false;
+            state.originCountry= null;
+            state.isLoading= false;
+            state.error= false;
         }
     },
     extraReducers: builder => {
         builder
+        // register
             .addCase(registerUser.pending, (state) => {
                 console.log('register pending')
                 state.isLoading = true;
@@ -111,6 +115,7 @@ const userSlice = createSlice({
                 state.error = action.payload; // <-- error response
             })
 
+            //login
             .addCase(loginUser.pending, (state) => {
                 console.log('login pending')
                 state.isLoading = true;
@@ -128,6 +133,7 @@ const userSlice = createSlice({
                 state.error = action.payload; // <-- error response
             })
 
+            //user info
             .addCase(userInfo.pending, (state) => {
                 console.log('user info pending')
                 state.isLoading = true;

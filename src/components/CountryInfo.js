@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import '../styles/CountryInfo.css'
 import CountryAttributes from './CountryAttributes'
 import { openModal, setMessage, unsuccessful } from '../features/modal/modalSlice';
+import { URL } from '../global/consts';
 import { useDispatch } from 'react-redux';
 const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) => {
 
@@ -30,6 +31,18 @@ const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) 
     const handleSubmit = async () => {
         try {
 
+            const blockedCountries = await axios.get(`${URL}admin/countries`);
+            console.log(blockedCountries)
+            if(blockedCountries.data.length > 0){
+                const blockedCountriesName = blockedCountries.data.map(country => country.country);
+               
+                if(blockedCountriesName.includes(selectedCountry.name)){
+                    dispatch(unsuccessful())
+                    dispatch(setMessage('Country is blocked by admin, please select a different country'))
+                    dispatch(openModal())
+                    return;
+                }
+            }
             setIsLoading(true)
             const GDPres = await axios.get(`https://api.worldbank.org/v2/country/${wbID}/indicator/NY.GDP.MKTP.CD?date=${minYear}:${maxYear}&per_page=300&format=json`)
             const POPres = await axios.get(`https://api.worldbank.org/v2/country/${wbID}/indicator/SP.POP.TOTL?date=${minYear}:${maxYear}&per_page=300&format=json`)
