@@ -1,18 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { getCountriesList } from '../global/consts'; // Ensure this path is correct
+import { getCountriesList, URL } from '../global/consts'; // Ensure this path is correct
 import '../styles/StatsPage.css';
 
 const StatsPage = () => {
-  const [mostPreservedCountry] = useState({
-    name: 'United States',
-    flag: 'https://via.placeholder.com/50',
-  });
-  const [comparedCountry1] = useState({
-    name: 'China',
-    flag: 'https://via.placeholder.com/50',
-  });
+  const [mostFavoredCountry, setMostFavoredCountry] = useState({ name: '', flag: '' })
+  const [comparedCountry1, setCompareCountry1] = useState({ name: '', flag: '' })
+  const [comparedCountry2, setCompareCountry2] = useState({ name: '', flag: '' })
   const [randomCountry, setRandomCountry] = useState('');
   const [randomCountryGDPData, setRandomCountryGDPData] = useState([]);
   const [countryList, setCountryList] = useState([]);
@@ -23,10 +18,23 @@ const StatsPage = () => {
       try {
         const countries = await getCountriesList();
         const formattedCountries = countries.map(country => ({
-          name: country.properties.NAME_EN,
-          code: country.properties.WB_A3,
+          name:country.properties.NAME_EN,
+          code:country.properties.WB_A3
         }));
         setCountryList(formattedCountries);
+
+        const topCountryName = await axios.get(`${URL}stats/topCountries`)
+
+        const topCountryFlagRes = await axios.get(`https://restcountries.com/v3.1/name/${topCountryName.data}?fields=flags`)
+        const topCountryFlag = topCountryFlagRes.data[0].flags.png ? topCountryFlagRes.data[0].flags.png : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTtukk7nN95mhQJNpUX7ctV8-St1eJ_J0wdw&s'
+
+
+        setMostFavoredCountry({ name: topCountryName.data, flag: topCountryFlag })
+
+        //TODO: set compare countries
+
+
+
       } catch (error) {
         console.error('Error fetching countries:', error);
       }
@@ -80,9 +88,9 @@ const StatsPage = () => {
       <div className="stat-card">
         <h2 className="card-title">The Most Favorite Country</h2>
         <div className="country-info">
-          <img src={mostPreservedCountry.flag} alt={mostPreservedCountry.name} className="flag-large" />
+          <img src={mostFavoredCountry.flag} alt={mostFavoredCountry.name} className="flag-large" />
           <div className="country-details">
-            <h3>{mostPreservedCountry.name}</h3>
+            <h3>{mostFavoredCountry.name}</h3>
           </div>
         </div>
       </div>
@@ -98,8 +106,8 @@ const StatsPage = () => {
           </div>
           <span className="vs">vs</span>
           <div className="country">
-            <img src={mostPreservedCountry.flag} alt={mostPreservedCountry.name} className="flag-large" />
-            <h3>{mostPreservedCountry.name}</h3>
+            <img src={comparedCountry2.flag} alt={comparedCountry2.name} className="flag-large" />
+            <h3>{comparedCountry2.name}</h3>
           </div>
         </div>
       </div>

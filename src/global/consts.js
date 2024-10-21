@@ -17,5 +17,5 @@ export const getCountriesList = async () => {
 }
 
 // ----- SERVER URL -----
-// export const url = 'https://gis-project-pop-g-backend.onrender.com/'
-export const URL = 'http://localhost:8000/'
+export const URL = 'https://gis-project-pop-g-backend.onrender.com/'
+// export const URL = 'http://localhost:8000/'
