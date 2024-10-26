@@ -3,10 +3,9 @@ import Country from '../components/Country';
 import Header from '../components/Header';
 
 const HomePage = () => {
-    const text = 'Choose a country to see its details'
     return (
         <main style={{ marginTop: '4px' }}>
-            <Header text={text} />
+            <Header title={'Welcome to POPG!'} text={'Choose a country to see its population and GDP through out the years.'} />
             <Country />
         </main>
     )

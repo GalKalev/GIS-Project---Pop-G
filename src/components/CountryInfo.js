@@ -7,10 +7,10 @@ import CountryAttributes from './CountryAttributes'
 import { openModal, setMessage, unsuccessful } from '../features/modal/modalSlice';
 import { URL } from '../global/consts';
 import { useDispatch } from 'react-redux';
+import Graph from './Graph'
 const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) => {
 
     const [isLoading, setIsLoading] = useState(false);
-    const [showMoreInfo, setShowMoreInfo] = useState(true)
     const [GDPvalues, setGDPvalues] = useState([])
     const [POPvalues, setPOPvalues] = useState([])
     const [yearList, setYearList] = useState([])
@@ -30,9 +30,9 @@ const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) 
 
     const handleSubmit = async () => {
         try {
+            setIsLoading(true)
 
             const blockedCountries = await axios.get(`${URL}admin/countries`);
-            console.log(blockedCountries)
             if(blockedCountries.data.length > 0){
                 const blockedCountriesName = blockedCountries.data.map(country => country.country);
                
@@ -43,7 +43,7 @@ const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) 
                     return;
                 }
             }
-            setIsLoading(true)
+        
             const GDPres = await axios.get(`https://api.worldbank.org/v2/country/${wbID}/indicator/NY.GDP.MKTP.CD?date=${minYear}:${maxYear}&per_page=300&format=json`)
             const POPres = await axios.get(`https://api.worldbank.org/v2/country/${wbID}/indicator/SP.POP.TOTL?date=${minYear}:${maxYear}&per_page=300&format=json`)
             const country = await axios.get(`https://restcountries.com/v3.1/name/${name}?fields=languages,capital,flags`);
@@ -159,7 +159,7 @@ const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) 
 
                         </Box>
                         <Box>
-                           GRAPH
+                           <Graph years={yearList} pop={POPvalues} gdp={GDPvalues}/>
                         </Box >
 
                     </Box>
