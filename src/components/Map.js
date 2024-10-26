@@ -8,7 +8,7 @@ import SearchBar from './SearchBar';
 
 
 
-const CountryMap = ({ geoData, setSelectedCountry, selectedCountry, position, handleId }) => {
+const CountryMap = ({ geoData, setSelectedCountry, selectedCountry, position,minYear, maxYear }) => {
 
 
   const map = useMapEvent('click', () => {
@@ -19,6 +19,7 @@ const CountryMap = ({ geoData, setSelectedCountry, selectedCountry, position, ha
   const selectedLayerRef = useRef(null);
   const countryLayers = useRef([]);
 
+
   useEffect(() => {
     // When selected country changes, maintain the style for the selected country
     if (selectedLayerRef.current) {
@@ -28,7 +29,7 @@ const CountryMap = ({ geoData, setSelectedCountry, selectedCountry, position, ha
         fillOpacity: 0.1,
       });
     }
-  }, [selectedCountry]);
+  }, [selectedCountry,minYear,maxYear]);
 
   const handleClickCountry = useCallback((event) => {
     event.target.setStyle({
@@ -155,7 +156,7 @@ const CountryMap = ({ geoData, setSelectedCountry, selectedCountry, position, ha
   );
 };
 
-const Map = ({ setSelectedCountry, selectedCountry, handleId }) => {
+const Map = ({ setSelectedCountry, selectedCountry, minYear, maxYear }) => {
   const [geoData, setGeoData] = useState(null);
   const position = useRef([51.505, -0.09])
 
@@ -191,7 +192,8 @@ const Map = ({ setSelectedCountry, selectedCountry, handleId }) => {
           setSelectedCountry={setSelectedCountry}
           selectedCountry={selectedCountry}
           position={position}
-          handleId={handleId}
+          minYear={minYear}
+          maxYear={maxYear}
         />
       )}
     </MapContainer>

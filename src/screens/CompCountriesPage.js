@@ -1,85 +1,222 @@
-import React, { useState } from 'react'; 
+import React, { useEffect, useState } from 'react';
+import 'leaflet/dist/leaflet.css';
 import Header from '../components/Header';
-import Country from '../components/Country';
+import CompMap from '../components/CompMap'
+import YearSlider from '../components/YearSlider';
+import { FavoriteIcon } from '../global/icons';
+import { Box, Fade, IconButton, Tooltip } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { APP_COLOR } from '../global/consts';
+import { useDispatch, useSelector } from 'react-redux';
+import { openModal, setMessage, unsuccessful } from '../features/modal/modalSlice';
+import CompCountryInfo from '../components/CompCountriesInfo';
+import { addComp, addCompareFavorite, deleteComp, deleteCompareFavorite } from '../features/favorites/favoritesSlice';
+
 
 const CompCountriesPage = () => {
-const [selectedCountries, setSelectedCountries] = useState([]);
+    const [selectedCountry1, setSelectedCountry1] = useState({
+        name: '',
+        continent: '',
+        wbID: '',
+        name_es: '',
+        name_ja: '',
+        name_tr: '',
+        flag: '',
+        capital: [],
+        languages: []
 
-const countries = ['Country1', 'Country2', 'Country3', 'Country4'];
+    });
+    const [selectedCountry2, setSelectedCountry2] = useState({
+        name: '',
+        continent: '',
+        wbID: '',
+        name_es: '',
+        name_ja: '',
+        name_tr: '',
+        flag: '',
+        capital: [],
+        languages: []
 
-const toggleCountry = (country) => {
-    if (selectedCountries.includes(country)) {
-    setSelectedCountries(selectedCountries.filter(c => c !== country));
-    } else if (selectedCountries.length < 4) {
-    setSelectedCountries([...selectedCountries, country]);
+    });
+
+    const yearToday = new Date();
+    const [minYear, setMinYear] = useState(1960);
+    const [maxYear, setMaxYear] = useState(yearToday.getFullYear());
+
+    const [isFavored, setIsFavored] = useState(false)
+
+    const { comp } = useSelector((store) => store.favorites)
+    const { id } = useSelector((store) => store.user)
+
+    const navigate = useNavigate()
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        checkFavorite()
+    }, [selectedCountry1, selectedCountry2, minYear, maxYear, comp])
+
+    const checkFavorite = () => {
+        let isCurrentFavored = false
+        comp?.map((c) => {
+            if (c.country1 === selectedCountry1.name && c.country2 === selectedCountry2.name && c.minYear === minYear && c.maxYear === maxYear) {
+                console.log('belong to favorites');
+                isCurrentFavored = true;
+                return;
+            }
+        })
+        setIsFavored(isCurrentFavored);
+        return isCurrentFavored;
     }
-};
 
-const countryStyle = {
-    border: '2px solid #ccc',
-    padding: '10px',
-    borderRadius: '8px',
-    textAlign: 'center',
-    minWidth: '600px',  
-    minHeight: '600px', 
-    display: 'flex',
-    justifyContent: 'space-between',  
-    alignItems: 'center',     
-    backgroundColor: '#f9f9f9',
-};
-
-const buttonStyle = {
-    fontSize: '2rem',
-    width: '100%',  
-    height: '100%', 
-    display: 'flex',
-    justifyContent: 'center',  
-    alignItems: 'center',     
-    backgroundColor: '#f9f9f9', 
-    border: 'none',
-    cursor: 'pointer',
-};
-
-return (
-    <main style={{ marginTop: '4px', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-        <Header text="compare countries" />
-
-        {/* Introduction */}
-        <p style={{ textAlign: 'center', marginTop: '10px', maxWidth: '600px', fontSize: '1.2rem', lineHeight: '1.5' }}>
-            The Compare Countries page allows you to visually explore and compare key statistics between different nations. 
-            Select at least two countries to begin comparing.
-        </p>
+    const handleFavorite = async () => {
 
 
-        {/* First two countries always displayed */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '20px' }}>
-            {countries.slice(0, 2).map((country, index) => (
-                <div key={index}>
-                    <div style={countryStyle}>
-                        <Country name={country} />
-                    </div>
-                </div>
-            ))}
-        </div>
+        const country1 = selectedCountry1.name;
+        const country2 = selectedCountry2.name;
+        const currCompare = { id, country1, country2, minYear, maxYear }
+        if (!isFavored) {
+            try {
+                const res = await dispatch(addCompareFavorite(currCompare));
 
-        {/* Last two countries are selectable with a '+' button */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px' }}>
-            {countries.slice(2).map((country, index) => (
-                <div key={index}>
-                    <div style={countryStyle}>
-                        {selectedCountries.includes(country) ? (
-                            <Country name={country} />
-                        ) : (
-                            <button onClick={() => toggleCountry(country)} style={buttonStyle}>+</button>
-                        )}
-                    </div>
-                </div>
-            ))}
-        </div>
-    </main>
-);
+                if (res.type === "/favorites/addCompare/fulfilled") {
+                    dispatch(addComp({ maxYear, minYear, country1, country2 }));
+                } else {
+                    throw Error()
+                }
+
+            } catch (error) {
+                dispatch(openModal())
+                dispatch(unsuccessful())
+                dispatch(setMessage('Error occurred while adding to Favorites, please try again later '))
+                console.error('error adding to compare favorites: ' + error.message)
+            }
+        } else {
+            try {
+                const res = await dispatch(deleteCompareFavorite(currCompare))
+
+                if (res.type === "/favorites/deleteCompare/fulfilled") {
+                    dispatch(deleteComp({ maxYear: maxYear, minYear: minYear, country1: country1, country2: country2 }));
+                } else {
+                    throw Error()
+                }
+
+            } catch (error) {
+                dispatch(openModal())
+                dispatch(unsuccessful())
+                dispatch(setMessage('Error occurred while removing from Favorites, please try again later '))
+                console.error('error deleting a compare favorite: ' + error.message)
+            }
+        }
+
+
+
+    }
+
+
+    return (
+        <main style={{ marginTop: -25, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+            <Header
+                title={'Compare Countries'}
+                text={
+                    <>
+                        Select two countries to compare between their GDP and population in a chosen year range.<br />
+                        You can deselect by pressing the countries you chose again.
+                    </>
+                } />
+
+            <h1>{selectedCountry1.name ? selectedCountry1.name : 'Select the first country'} VS. {selectedCountry2.name ? selectedCountry2.name : 'Select the second country'}</h1>
+
+            <YearSlider
+                setMaxYear={setMaxYear}
+                setMinYear={setMinYear}
+                maxYear={maxYear}
+                minYear={minYear}
+            />
+
+            {/* Render Map component by default */}
+            <div style={{ marginTop: '15px', width: '90%', height: '400px' }}>
+                <CompMap
+                    setSelectedCountry1={setSelectedCountry1}
+                    setSelectedCountry2={setSelectedCountry2}
+                    selectedCountry1={selectedCountry1}
+                    selectedCountry2={selectedCountry2}
+                    minYear={minYear}
+                    maxYear={maxYear}
+                />
+            </div>
+
+            <Box sx={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                alignContent: 'center',
+                width: '100%',
+                // backgroundColor:'pink'
+            }}>
+                <CompCountryInfo selectedCountry1={selectedCountry1} selectedCountry2={selectedCountry2} setSelectedCountry1={setSelectedCountry1} setSelectedCountry2={setSelectedCountry2} maxYear={maxYear} minYear={minYear} />
+
+
+                {selectedCountry1.flag && selectedCountry2.flag ? (
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Tooltip
+
+                            title={isFavored ? 'Remove from favorites' : 'Add to Favorite'}
+                            arrow
+                            TransitionComponent={Fade}
+                            TransitionProps={{ timeout: 600 }}
+                            PopperProps={{
+                                sx: {
+                                    '& .MuiTooltip-tooltip': {
+                                        fontSize: '12px', // Adjust font size here
+                                        padding: '15px',
+                                        borderRadius: 2
+
+                                    },
+                                },
+                            }}
+                        >
+                            <IconButton
+                                onClick={handleFavorite}
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    minWidth: 20,
+                                    textAlign: 'center',
+                                    padding: 2,
+                                    '& svg': {
+                                        margin: 'auto', // Ensure icon takes up available space
+                                        display: 'block', // Make sure SVG is displayed as a block-level element
+                                    },
+                                }}
+                            >
+                                <FavoriteIcon style={{
+                                    color: 'black',           // Icon color
+                                    backgroundColor: isFavored ? APP_COLOR : null,
+                                    borderWidth: 2,           // Border width
+                                    borderColor: 'black',     // Border color
+                                    borderStyle: 'solid',     // Border style (required to show the border)
+                                    borderRadius: 20,          // Optional: rounded corners
+                                    padding: 1,
+                                    marginRight: 4,
+                                    alignItems: 'center'
+                                }}
+                                    title={'Favorite'}
+                                    fontSize='small'
+                                />
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
+
+                ) : (
+                    <></>
+                )
+
+                }
+
+            </Box>
+        </main>
+    );
 };
 
 export default CompCountriesPage;
-
-

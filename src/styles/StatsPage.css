@@ -28,6 +28,7 @@ General layout .stats-container {
     margin-bottom: 30px;
     margin-bottom: 30px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
 }
 
 .stat-card:hover {
@@ -65,10 +66,6 @@ General layout .stats-container {
     color: #16a085;
 }
 
-/* Comparison card */
-.comparison-card {
-    text-align: center;
-}
 
 .comparison-info {
     display: flex;
@@ -96,4 +93,11 @@ General layout .stats-container {
 
 .recharts-responsive-container {
     margin-top: 20px;
+}
+
+.random-container{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }

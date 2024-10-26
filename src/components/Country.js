@@ -108,15 +108,15 @@ const Country = () => {
                 <Map
                     setSelectedCountry={setSelectedCountry}
                     selectedCountry={selectedCountry}
-                // handleId={handleId}
+                    minYear={minYear}
+                    maxYear={maxYear}
                 />
             </div>
             <Box sx={{
                 flex: 1,
                 alignItems: 'center',
-                // backgroundColor: 'red',
-                display: 'flex',          // Add this line
-                flexDirection: 'column',  // Add this line
+                display: 'flex',          
+                flexDirection: 'column', 
                 alignContent: 'center'
             }}>
                 <YearSlider
@@ -142,7 +142,7 @@ const Country = () => {
                         PopperProps={{
                             sx: {
                                 '& .MuiTooltip-tooltip': {
-                                    fontSize: '12px', // Adjust font size here
+                                    fontSize: '12px',
                                     padding: '15px',
                                     borderRadius: 2
 
@@ -160,18 +160,18 @@ const Country = () => {
                                 textAlign: 'center',
                                 padding: 2,
                                 '& svg': {
-                                    margin: 'auto', // Ensure icon takes up available space
-                                    display: 'block', // Make sure SVG is displayed as a block-level element
+                                    margin: 'auto', 
+                                    display: 'block',
                                 },
                             }}
                         >
                             <FavoriteIcon style={{
-                                color: 'black',           // Icon color
+                                color: 'black',           
                                 backgroundColor: isFavored ? APP_COLOR : null,
-                                borderWidth: 2,           // Border width
-                                borderColor: 'black',     // Border color
-                                borderStyle: 'solid',     // Border style (required to show the border)
-                                borderRadius: 20,          // Optional: rounded corners
+                                borderWidth: 2,          
+                                borderColor: 'black',     
+                                borderStyle: 'solid',     
+                                borderRadius: 20,          
                                 padding: 1,
                                 marginRight: 4,
                                 alignItems: 'center'
