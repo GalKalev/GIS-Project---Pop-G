@@ -1,11 +1,12 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { MapContainer, GeoJSON, TileLayer, useMapEvent } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import * as turf from '@turf/turf';
 import L from 'leaflet';
 import axios from 'axios';
 import SearchBar from './SearchBar';
-
+import { Fade, IconButton, Tooltip } from '@mui/material';
+import { DeleteIcon } from '../global/icons';
 
 
 const CountryMap = ({ geoData, setSelectedCountry1, selectedCountry1, setSelectedCountry2, selectedCountry2, position, minYear, maxYear }) => {
@@ -38,7 +39,7 @@ const CountryMap = ({ geoData, setSelectedCountry1, selectedCountry1, setSelecte
         fillOpacity: 0.1,
       });
     }
-  }, [selectedCountry1, selectedCountry2,minYear, maxYear]);
+  }, [selectedCountry1, selectedCountry2, minYear, maxYear]);
 
   useEffect(() => {
     // When selected country changes, maintain the style for the selected country
@@ -174,6 +175,38 @@ const CountryMap = ({ geoData, setSelectedCountry1, selectedCountry1, setSelecte
     }
   }, [handleClickCountry, map, position]);
 
+  const handleClearCountries = () => {
+    setSelectedCountry1({
+      name: '',
+      continent: '',
+      wbID: '',
+      name_es: '',
+      name_ja: '',
+      name_tr: '',
+      flag: '',
+      capital: [],
+      languages: []
+    });
+    setSelectedCountry2({
+      name: '',
+      continent: '',
+      wbID: '',
+      name_es: '',
+      name_ja: '',
+      name_tr: '',
+      flag: '',
+      capital: [],
+      languages: []
+    })
+
+    previousLayer1.current = null;
+    previousLayer2.current = null;
+    selectedLayerRef1.current = null;
+    selectedLayerRef2.current = null;
+    countryLayers.current = [];
+
+  };
+
 
   return (
     <>
@@ -190,7 +223,61 @@ const CountryMap = ({ geoData, setSelectedCountry1, selectedCountry1, setSelecte
             setSelectedCountry={setSelectedCountry1}
             handleSearchSelection={handleSearchSelection}
           />
+
         </div>
+
+        <div style={{
+          position: 'absolute',
+          right: '10%',
+          zIndex: 1000,
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '10px'
+        }}
+        >
+          <Tooltip
+            title={'Clear Countries'}
+            arrow
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 600 }}
+            PopperProps={{
+              sx: {
+                '& .MuiTooltip-tooltip': {
+                  fontSize: '20px', // Adjust font size here
+                  padding: '15px',
+                  borderRadius: 2
+
+                },
+              },
+            }}
+          >
+            <IconButton
+              onClick={handleClearCountries}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minWidth: 20,
+                textAlign: 'center',
+                backgroundColor: 'lightgray',
+                marginTop:0.5,
+                border:'2px black solid',
+                padding: 2,
+                '& svg': {
+                  margin: 'auto',
+                  display: 'block',
+                },
+                '&:hover': {
+                  border:`2px #f397c2 solid`,
+                  backgroundColor: 'lightgray',
+                }
+              }}
+            >
+              <DeleteIcon fontSize={'small'}/>
+            </IconButton>
+          </Tooltip>
+        </div>
+
 
       </div>
 
@@ -261,7 +348,7 @@ const CountryMap = ({ geoData, setSelectedCountry1, selectedCountry1, setSelecte
   );
 };
 
-const Map = ({ setSelectedCountry1, setSelectedCountry2, selectedCountry1, selectedCountry2,minYear, maxYear }) => {
+const Map = ({ setSelectedCountry1, setSelectedCountry2, selectedCountry1, selectedCountry2, minYear, maxYear }) => {
   const [geoData, setGeoData] = useState(null);
   const position = useRef([51.505, -0.09])
 

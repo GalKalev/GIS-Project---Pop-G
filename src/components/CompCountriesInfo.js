@@ -1,18 +1,17 @@
 import { Button } from '@mui/material'
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Box from '@mui/material/Box';
 import '../styles/CountryInfo.css'
 import CountryAttributes from './CountryAttributes'
 import { openModal, setMessage, unsuccessful } from '../features/modal/modalSlice';
 import { URL } from '../global/consts';
-import { useDispatch } from 'react-redux';
-import Graph from './Graph'
+import { useDispatch, useSelector } from 'react-redux';
 import CompGraph from './CompGraph';
-const CompCountryInfo = ({ selectedCountry1, selectedCountry2, minYear, maxYear, setSelectedCountry1, setSelectedCountry2 }) => {
+import { setIsLoading } from '../features/favorites/favoritesSlice';
+import LoadingScreen from '../screens/LoadingScreen'
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [showMoreInfo, setShowMoreInfo] = useState(true)
+const CompCountryInfo = ({ selectedCountry1, selectedCountry2, minYear, maxYear, setSelectedCountry1, setSelectedCountry2 }) => {
     const [GDP1values, setGDP1values] = useState([])
     const [POP1values, setPOP1values] = useState([])
     const [GDP2values, setGDP2values] = useState([])
@@ -42,9 +41,12 @@ const CompCountryInfo = ({ selectedCountry1, selectedCountry2, minYear, maxYear,
         languages: languages2
     } = selectedCountry2;
 
+    const {isLoading} = useSelector((store) => store.favorites)
+
     const dispatch = useDispatch();
 
     const handleSubmit = async () => {
+        dispatch(setIsLoading(true))
         try {
 
             const blockedCountries = await axios.get(`${URL}admin/countries`);
@@ -135,15 +137,15 @@ const CompCountryInfo = ({ selectedCountry1, selectedCountry2, minYear, maxYear,
 
             // Display the error message to the user (replace this with your preferred method)
         } finally {
-            setIsLoading(false)
+            dispatch(setIsLoading(false))
         }
     }
 
 
     if (isLoading) {
         return (
-            <div>
-                Loading...
+            <div style={{marginTop:30}}>
+                <LoadingScreen/>
             </div>
         )
     }
