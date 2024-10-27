@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { getCountriesList, URL } from '../global/consts'; // Ensure this path is correct
 import '../styles/StatsPage.css';
 import { useDispatch } from 'react-redux';
@@ -9,6 +8,7 @@ import Graph from '../components/Graph';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Box, IconButton } from '@mui/material';
 import Header from '../components/Header';
+import LoadingScreen from './LoadingScreen';
 
 const StatsPage = () => {
   const [mostFavoredCountry, setMostFavoredCountry] = useState({ name: '', flag: '' })
@@ -19,14 +19,18 @@ const StatsPage = () => {
   const [randomCountryPOPData, setRandomCountryPOPData] = useState([]);
   const [countryList, setCountryList] = useState([]);
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const dispatch = useDispatch()
 
   // Fetch the country list from the GeoJSON file
   useEffect(() => {
     const fetchCountries = async () => {
       try {
+        setIsLoading(true)
         const countries = await getCountriesList();
         const blockedCountriesResponse = await axios.get(`${URL}admin/countries`);
+        console.log(blockedCountriesResponse);
         const blockedCountries = blockedCountriesResponse.data.map(item => item.country);
 
         // Format the countries
@@ -70,6 +74,8 @@ const StatsPage = () => {
         dispatch(setMessage('Cannot fetch stats, please try again later.'))
         dispatch(openModal())
         return;
+      }finally{
+        setIsLoading(false)
       }
     };
     fetchCountries();
@@ -143,6 +149,15 @@ const StatsPage = () => {
     }
 
   }, [countryList, setRandomValues]);
+
+
+  if(isLoading){
+    return(
+      <div>
+        <LoadingScreen/>
+      </div>
+    )
+  }
 
   return (
     <div className="stats-container">

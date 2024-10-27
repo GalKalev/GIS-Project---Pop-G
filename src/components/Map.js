@@ -8,7 +8,7 @@ import SearchBar from './SearchBar';
 
 
 
-const CountryMap = ({ geoData, setSelectedCountry, selectedCountry, position,minYear, maxYear }) => {
+const CountryMap = ({ geoData, setSelectedCountry, selectedCountry, position,minYear, maxYear, isMapShrunken }) => {
 
 
   const map = useMapEvent('click', () => {
@@ -29,7 +29,7 @@ const CountryMap = ({ geoData, setSelectedCountry, selectedCountry, position,min
         fillOpacity: 0.1,
       });
     }
-  }, [selectedCountry,minYear,maxYear]);
+  }, [selectedCountry,minYear,maxYear,isMapShrunken]);
 
   const handleClickCountry = useCallback((event) => {
     event.target.setStyle({
@@ -156,7 +156,7 @@ const CountryMap = ({ geoData, setSelectedCountry, selectedCountry, position,min
   );
 };
 
-const Map = ({ setSelectedCountry, selectedCountry, minYear, maxYear }) => {
+const Map = ({ setSelectedCountry, selectedCountry, minYear, maxYear,isMapShrunken }) => {
   const [geoData, setGeoData] = useState(null);
   const position = useRef([51.505, -0.09])
 
@@ -194,6 +194,7 @@ const Map = ({ setSelectedCountry, selectedCountry, minYear, maxYear }) => {
           position={position}
           minYear={minYear}
           maxYear={maxYear}
+          isMapShrunken={isMapShrunken}
         />
       )}
     </MapContainer>

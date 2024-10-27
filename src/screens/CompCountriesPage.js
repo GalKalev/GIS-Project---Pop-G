@@ -10,7 +10,7 @@ import { APP_COLOR } from '../global/consts';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal, setMessage, unsuccessful } from '../features/modal/modalSlice';
 import CompCountryInfo from '../components/CompCountriesInfo';
-import { addComp, addCompareFavorite, deleteComp, deleteCompareFavorite } from '../features/favorites/favoritesSlice';
+import { addCompareFavorite, deleteCompareFavorite, setComp } from '../features/favorites/favoritesSlice';
 
 
 const CompCountriesPage = () => {
@@ -44,8 +44,9 @@ const CompCountriesPage = () => {
     const [maxYear, setMaxYear] = useState(yearToday.getFullYear());
 
     const [isFavored, setIsFavored] = useState(false)
+    const [favoredCountriesId, setFavoredCountriesId] = useState(null)
 
-    const { comp } = useSelector((store) => store.favorites)
+    const { comp, isLoading } = useSelector((store) => store.favorites)
     const { id } = useSelector((store) => store.user)
 
     const navigate = useNavigate()
@@ -57,14 +58,17 @@ const CompCountriesPage = () => {
 
     const checkFavorite = () => {
         let isCurrentFavored = false
+        let countriesId = null;
         comp?.map((c) => {
             if (c.country1 === selectedCountry1.name && c.country2 === selectedCountry2.name && c.minYear === minYear && c.maxYear === maxYear) {
                 console.log('belong to favorites');
                 isCurrentFavored = true;
+                countriesId = c.id;
                 return;
             }
         })
         setIsFavored(isCurrentFavored);
+        setFavoredCountriesId(countriesId)
         return isCurrentFavored;
     }
 
@@ -72,14 +76,16 @@ const CompCountriesPage = () => {
 
 
         const country1 = selectedCountry1.name;
+        const WBId1 = selectedCountry1.wbID;
         const country2 = selectedCountry2.name;
-        const currCompare = { id, country1, country2, minYear, maxYear }
+        const WBId2 = selectedCountry2.wbID;
+        const currCompare = { id, country1, country2, minYear, maxYear, WBId1, WBId2 }
         if (!isFavored) {
             try {
                 const res = await dispatch(addCompareFavorite(currCompare));
 
                 if (res.type === "/favorites/addCompare/fulfilled") {
-                    dispatch(addComp({ maxYear, minYear, country1, country2 }));
+                    dispatch(setComp(res.payload));
                 } else {
                     throw Error()
                 }
@@ -92,10 +98,10 @@ const CompCountriesPage = () => {
             }
         } else {
             try {
-                const res = await dispatch(deleteCompareFavorite(currCompare))
+                const res = await dispatch(deleteCompareFavorite({userId: id, id:favoredCountriesId}))
 
                 if (res.type === "/favorites/deleteCompare/fulfilled") {
-                    dispatch(deleteComp({ maxYear: maxYear, minYear: minYear, country1: country1, country2: country2 }));
+                    dispatch(setComp(res.payload))
                 } else {
                     throw Error()
                 }
@@ -111,6 +117,9 @@ const CompCountriesPage = () => {
 
 
     }
+
+
+
 
 
     return (
@@ -156,7 +165,7 @@ const CompCountriesPage = () => {
                 <CompCountryInfo selectedCountry1={selectedCountry1} selectedCountry2={selectedCountry2} setSelectedCountry1={setSelectedCountry1} setSelectedCountry2={setSelectedCountry2} maxYear={maxYear} minYear={minYear} />
 
 
-                {selectedCountry1.flag && selectedCountry2.flag ? (
+                {selectedCountry1.flag && selectedCountry2.flag && !isLoading ? (
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Tooltip
 

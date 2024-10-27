@@ -20,7 +20,7 @@ const formatNumber = (number) => {
   return number; // Return the number if it's smaller
 };
 
-export default function Graph({ years = [], pop = [], gdp = [] }) {
+export default function Graph({ years = [], pop = [], gdp = [], isMapShrunken }) {
   const data = years.map((year, index) => ({
     year,
     Population: pop[index],
@@ -30,7 +30,7 @@ export default function Graph({ years = [], pop = [], gdp = [] }) {
   return (
      <div style={{ width: '100%', height: '100%', maxWidth: '1000px', maxHeight: '500px' }}>
       <BarChart
-        width={400} // Fill the container width
+        width={isMapShrunken ? 900 : 400} // Fill the container width
         height={300} // Fill the container height
         data={data}
         margin={{

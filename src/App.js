@@ -5,7 +5,6 @@ import HomePage from './screens/HomePage';
 import StatsPage from './screens/StatsPage';
 import CompCountriesPage from './screens/CompCountriesPage';
 import FavoritePage from './screens/FavoritePage';
-
 import ProfilePage from './screens/ProfilePage';
 import Login from './screens/Login';
 import Register from './screens/Register';
@@ -13,6 +12,7 @@ import Footer from './components/Footer';
 import AdminPage from './screens/AdminPage';
 import { useSelector } from 'react-redux';
 import ServerResModal from './components/ServerResModal';
+import LoadingScreen from './screens/LoadingScreen';
 
 
 // Check if user logged in to access this routes
@@ -34,7 +34,7 @@ function App() {
   const { isLoading } = useSelector((store) => store.user)
   if (isLoading) {
     return (<div>
-      Loading...
+     <LoadingScreen/>
     </div>)
   }
   return (

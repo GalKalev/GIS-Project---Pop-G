@@ -6,11 +6,14 @@ import '../styles/CountryInfo.css'
 import CountryAttributes from './CountryAttributes'
 import { openModal, setMessage, unsuccessful } from '../features/modal/modalSlice';
 import { URL } from '../global/consts';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Graph from './Graph'
-const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) => {
+import { setIsLoading } from '../features/favorites/favoritesSlice';
+import LoadingScreen from '../screens/LoadingScreen';
 
-    const [isLoading, setIsLoading] = useState(false);
+
+const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry, isMapShrunken }) => {
+
     const [GDPvalues, setGDPvalues] = useState([])
     const [POPvalues, setPOPvalues] = useState([])
     const [yearList, setYearList] = useState([])
@@ -26,11 +29,12 @@ const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) 
     } = selectedCountry
 
     const dispatch = useDispatch();
+    const {isLoading} = useSelector((store) => store.favorites)
 
 
     const handleSubmit = async () => {
         try {
-            setIsLoading(true)
+            dispatch(setIsLoading(true))
 
             const blockedCountries = await axios.get(`${URL}admin/countries`);
             if(blockedCountries.data.length > 0){
@@ -102,7 +106,7 @@ const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) 
 
             // Display the error message to the user (replace this with your preferred method)
         } finally {
-            setIsLoading(false)
+            dispatch(setIsLoading(false))
         }
     }
 
@@ -110,7 +114,7 @@ const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) 
     if (isLoading) {
         return (
             <div>
-                Loading...
+                <LoadingScreen/>
             </div>
         )
     }
@@ -148,7 +152,6 @@ const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) 
 
                     }}>
 
-
                         <Box>
                             <div>
 
@@ -159,19 +162,13 @@ const CountryInfo = ({ selectedCountry, minYear, maxYear, setSelectedCountry }) 
 
                         </Box>
                         <Box>
-                           <Graph years={yearList} pop={POPvalues} gdp={GDPvalues}/>
+                            <Graph years={yearList} pop={POPvalues} gdp={GDPvalues} isMapShrunken={isMapShrunken}/>
+                           
                         </Box >
 
                     </Box>
 
-
-
                 </Box>
-
-
-
-
-
 
             </div>
         )

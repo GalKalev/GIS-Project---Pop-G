@@ -34,9 +34,10 @@ export const deleteBasicFavorite = createAsyncThunk(
     '/favorites/deleteBasic',
     async (favorite, thunkAPI) => {
         try {
-            const { id, country, minYear, maxYear } = favorite;
+            const { id, userId } = favorite;
+     
             const { data } = await axios.delete(`${URL}favorites/basic`, {
-                params: { id, country, minYear, maxYear }
+                params: { id, userId }
             });
 
             return data;
@@ -71,9 +72,9 @@ export const deleteCompareFavorite = createAsyncThunk(
     '/favorites/deleteCompare',
     async (favorite, thunkAPI) => {
         try {
-            const { id, country1,country2, minYear, maxYear } = favorite;
+            const { id, userId } = favorite;
             const { data } = await axios.delete(`${URL}favorites/Compare`, {
-                params: { id, country1,country2, minYear, maxYear }
+                params: { id, userId }
             });
 
             return data;
@@ -91,48 +92,16 @@ const favoritesSlice = createSlice({
         setBasic: (state, action) => {
             state.basic = action.payload;
         },
-        addBasic: (state, action) => {
-            return {
-                ...state,
-                basic: [...state.basic, action.payload]
-            }
-        },
-        deleteBasic: (state, action) => {
-            return {
-                ...state,
-                basic: state.basic.filter(
-                    (basicFav) =>
-                        !(basicFav.country === action.payload.country &&
-                            basicFav.minYear === action.payload.minYear &&
-                            basicFav.maxYear === action.payload.maxYear)
-                )
-            }
-        },
-        addComp: (state, action) => {
-            return {
-                ...state,
-                comp: [...state.comp, action.payload]
-            }
-        },
-        deleteComp: (state, action) => {
-            return {
-                ...state,
-                comp: state.comp.filter(
-                    (compFav) =>
-                        !(compFav.country1 === action.payload.country1 &&
-                        compFav.country2 === action.payload.country2 &&
-                            compFav.minYear === action.payload.minYear &&
-                            compFav.maxYear === action.payload.maxYear)
-                )
-            }
-        },
         setComp: (state, action) => {
             state.comp = action.payload;
         },
         favoriteLogout: (state, action) => {
             state.basic = null;
             state.comp = null;
-        }
+        },
+        setIsLoading: (state, action) => {
+            state.isLoading = action.payload;
+        },
     },
     extraReducers: builder => {
         builder
@@ -206,6 +175,6 @@ const favoritesSlice = createSlice({
     },
 })
 
-export const { setBasic, setComp, favoriteLogout, addBasic, deleteBasic,addComp, deleteComp } = favoritesSlice.actions;
+export const { setBasic, setComp, favoriteLogout,setIsLoading } = favoritesSlice.actions;
 
 export default favoritesSlice.reducer;
