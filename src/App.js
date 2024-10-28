@@ -32,25 +32,25 @@ const AdminRoute = ({ element }) => {
 
 function App() {
   const { isLoading } = useSelector((store) => store.user)
-  if (isLoading) {
-    return (<div>
-     <LoadingScreen/>
-    </div>)
-  }
   return (
     <Router>
       <ServerResModal />
       <NavBar />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/compCountries" element={<UserRoute element={<CompCountriesPage />} />} />
-        <Route path="/stats" element={<UserRoute element={<StatsPage />} />} />
-        <Route path="/favorite" element={<UserRoute element={<FavoritePage />} />} />
-        <Route path="/profile" element={<UserRoute element={<ProfilePage />} />} />
-        <Route path="/admin" element={<AdminRoute element={<AdminPage />}/>} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
+      {isLoading ? (
+        <LoadingScreen />
+      ) : (
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/compCountries" element={<UserRoute element={<CompCountriesPage />} />} />
+          <Route path="/stats" element={<UserRoute element={<StatsPage />} />} />
+          <Route path="/favorite" element={<UserRoute element={<FavoritePage />} />} />
+          <Route path="/profile" element={<UserRoute element={<ProfilePage />} />} />
+          <Route path="/admin" element={<AdminRoute element={<AdminPage />} />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      )}
+
       <Footer />
     </Router>
   );
