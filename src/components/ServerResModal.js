@@ -19,19 +19,18 @@ const style = {
     p: 4,
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',  
-    justifyContent: 'center', 
-    textAlign: 'center' ,
-    borderRadius:10
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    borderRadius: 10
 };
 
 // export default function ServerResModal({ isOpen, setIsOpen, isSuccessful, message }) {
 export default function ServerResModal() {
-    const {isOpen, message, isSuccessful} = useSelector((store) => store.modal);
+    const { isOpen, message, isSuccessful } = useSelector((store) => store.modal);
     const dispatch = useDispatch();
 
     const handleClose = () => dispatch(closeModal());
-    // const handleClose = () => setIsOpen(false);
 
     return (
         <div>
@@ -43,12 +42,12 @@ export default function ServerResModal() {
             >
                 <Box sx={style}>
                     {isSuccessful ? (
-                        <SentimentSatisfiedAltIcon sx={{ fontSize: 80, color:'green' }} /> // Increase icon size
+                        <SentimentSatisfiedAltIcon sx={{ fontSize: 80, color: 'green' }} /> // Increase icon size
                     ) : (
-                        <SentimentVeryDissatisfiedIcon sx={{ fontSize: 80 , color:'#f11138'}} /> // Increase icon size
+                        <SentimentVeryDissatisfiedIcon sx={{ fontSize: 80, color: '#f11138' }} /> // Increase icon size
                     )}
                     <Typography variant="h6" sx={{ mt: 2 }}>
-                        {message}
+                        {typeof message === 'string' ? message : JSON.stringify(message)}
                     </Typography>
                 </Box>
             </Modal>

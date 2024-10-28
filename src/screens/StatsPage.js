@@ -49,10 +49,7 @@ const StatsPage = () => {
           const topCountryFlagRes = await axios.get(`https://restcountries.com/v3.1/name/${topCountryName.data}?fields=flags`)
           const topCountryFlag = topCountryFlagRes.data[0].flags.png ? topCountryFlagRes.data[0].flags.png : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTtukk7nN95mhQJNpUX7ctV8-St1eJ_J0wdw&s'
           setMostFavoredCountry({ name: topCountryName.data, flag: topCountryFlag })
-        } else {
-          console.error('error fetching stats basic')
-          throw Error('Cannot fetch stats, please try again later.')
-        }
+        } 
 
         const topCompareCountriesName = await axios.get(`${URL}stats/topCompareCountries`)
         if (topCompareCountriesName.data.country1) {
@@ -63,18 +60,15 @@ const StatsPage = () => {
 
           setCompareCountry1({ name: topCompareCountriesName.data.country1, flag: topCompareCountry1Flag })
           setCompareCountry2({ name: topCompareCountriesName.data.country2, flag: topCompareCountry2Flag })
-        } else {
-          console.error('error fetching stats compare')
-          throw Error('Cannot fetch stats, please try again later.')
-        }
+        } 
 
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        console.error('Error fetching stats compare:', error);
         dispatch(unsuccessful())
         dispatch(setMessage('Cannot fetch stats, please try again later.'))
         dispatch(openModal())
         return;
-      }finally{
+      } finally {
         setIsLoading(false)
       }
     };
@@ -151,10 +145,10 @@ const StatsPage = () => {
   }, [countryList, setRandomValues]);
 
 
-  if(isLoading){
-    return(
-      <div>
-        <LoadingScreen/>
+  if (isLoading) {
+    return (
+      <div style={{ padding: 10 }}>
+        <LoadingScreen />
       </div>
     )
   }
@@ -169,34 +163,45 @@ const StatsPage = () => {
       {/* Most preserved country */}
       <div className="stat-card">
         <h2 className="card-title">Most Favorite Country</h2>
-        <div className="country-info" style={{
-          display: 'flex',
-          alignItems: 'center',  
-          justifyContent: 'center',
-          textAlign: 'center',
-        }}>
-          <img src={mostFavoredCountry.flag} alt={mostFavoredCountry.name} className="flag-large" />
-          <div className="country-details">
-            <h3>{mostFavoredCountry.name}</h3>
-          </div>
-        </div>
+        {mostFavoredCountry.name ?
+          (
+            <div className="country-info" style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+            }}>
+
+              <img src={mostFavoredCountry.flag} alt={mostFavoredCountry.name} className="flag-large" />
+              <h3>{mostFavoredCountry.name}</h3>
+            </div>
+          ) : (
+            <h3 style={{textAlign:'center'}}>No Entries Yet :(</h3>
+          )}
+
+
       </div>
 
       {/* Comparison between countries */}
       <div className="stat-card">
         <h2 className="card-title">Comparison Between Countries</h2>
         <p className="comparison-text">The two countries most frequently compared by users are China and the United States.</p>
-        <div className="comparison-info">
-          <div className="country">
-            <img src={comparedCountry1.flag} alt={comparedCountry1.name} className="flag-large" />
-            <h3>{comparedCountry1.name}</h3>
+        {comparedCountry1.name ? (
+          <div className="comparison-info">
+            <div className="country">
+              <img src={comparedCountry1.flag} alt={comparedCountry1.name} className="flag-large" />
+              <h3>{comparedCountry1.name}</h3>
+            </div>
+            <span className="vs">vs</span>
+            <div className="country">
+              <img src={comparedCountry2.flag} alt={comparedCountry2.name} className="flag-large" />
+              <h3>{comparedCountry2.name}</h3>
+            </div>
           </div>
-          <span className="vs">vs</span>
-          <div className="country">
-            <img src={comparedCountry2.flag} alt={comparedCountry2.name} className="flag-large" />
-            <h3>{comparedCountry2.name}</h3>
-          </div>
-        </div>
+        ) : (
+          <h3 style={{textAlign:'center'}}>No Entries Yet :(</h3>
+        )}
+
       </div>
 
       {
@@ -213,7 +218,7 @@ const StatsPage = () => {
               alignItems: 'center',
               height: '100%',
             }}>
-              <Graph years={[2015, 2016, 2017, 2018, 2019, 2020]} pop={randomCountryPOPData} gdp={randomCountryGDPData} />
+              <Graph years={[2015, 2016, 2017, 2018, 2019, 2020]} pop={randomCountryPOPData} gdp={randomCountryGDPData} isMapShrunken={true}/>
 
             </Box>
 
