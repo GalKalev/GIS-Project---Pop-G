@@ -157,7 +157,7 @@ const StatsPage = () => {
     <div className="stats-container">
       <Header
         title={'Statistics Overview'}
-        text={' Statistics help us understand and analyze data, revealing patterns and insights that guide decision-making. This section provides an overview of key metrics and trends to give you a clearer picture of the underlying data.'}
+        text={'Here you can see POPG\'s users\' favorites countries, single country and comparison, as well as a random country\'s GDP and population info between 2015-2020'}
       />
 
       {/* Most preserved country */}
@@ -185,7 +185,6 @@ const StatsPage = () => {
       {/* Comparison between countries */}
       <div className="stat-card">
         <h2 className="card-title">Comparison Between Countries</h2>
-        <p className="comparison-text">The two countries most frequently compared by users are China and the United States.</p>
         {comparedCountry1.name ? (
           <div className="comparison-info">
             <div className="country">

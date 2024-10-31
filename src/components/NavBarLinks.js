@@ -17,8 +17,9 @@ import Logo from './Logo';
 import { APP_COLOR } from '../global/consts';
 import { useSelector, useDispatch } from 'react-redux';
 import { userLogout } from '../features/user/userSlice';
-import {favoriteLogout} from '../features/favorites/favoritesSlice'
+import { favoriteLogout } from '../features/favorites/favoritesSlice'
 import { persistor } from '../store';
+import axios from 'axios';
 
 
 // Pages style
@@ -45,8 +46,9 @@ function ResponsiveAppBar() {
     const navigate = useNavigate();
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [userCountryFlag, setUserCountryFlag] = React.useState(null)
 
-    const { email, originCountry } = useSelector((store) => store.user)
+    const { id, firstName, originCountry } = useSelector((store) => store.user)
 
     const dispatch = useDispatch()
 
@@ -56,41 +58,55 @@ function ResponsiveAppBar() {
     };
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
-        if(!email){
+        if (!id) {
             navigate('/login');
         }
-        
+
 
     };
 
-    //TODO: check user before navigating
+
+    const getUserFlag = async () => {
+        try {
+            const flagRes = await axios.get(`https://restcountries.com/v3.1/name/${originCountry}?fields=flags`)
+            const flag = flagRes?.data[0].flags.png || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTtukk7nN95mhQJNpUX7ctV8-St1eJ_J0wdw&s';
+            setUserCountryFlag(flag)
+        } catch (error) {
+            console.error('error setting flag nav links: ' + error.message)
+        }
+    }
+    React.useEffect(() => {
+        if (originCountry) {
+            getUserFlag()
+        }else{
+            setUserCountryFlag(null)
+        }
+    }, [originCountry])
+
     const handleCloseNavMenu = (event) => {
         setAnchorElNav(null);
 
+        const page = event.currentTarget.getAttribute('aria-label') || event.currentTarget.querySelector('svg')?.getAttribute('title');
+        switch (page) {
+            case ('Compare Countries'):
+                navigate('/compCountries');
+                break;
+            case ('Stats'):
+                navigate('/stats');
+                break;
+            case ('Favorite'):
+                navigate('/favorite');
+                break;
+            default:
 
-        // if (email) {
-            const page = event.currentTarget.getAttribute('aria-label') || event.currentTarget.querySelector('svg')?.getAttribute('title');
-            switch (page) {
-                case ('Compare Countries'):
-                    navigate('/compCountries');
-                    break;
-                case ('Stats'):
-                    navigate('/stats');
-                    break;
-                case ('Favorite'):
-                    navigate('/favorite');
-                    break;
-                default:
-
-                    break;
-            }
-        // }
+                break;
+        }
 
     };
 
     const handleCloseUserMenu = (event) => {
         setAnchorElUser(null);
-        if (email) {
+        if (id) {
             const userPage = event.currentTarget.querySelector('.MuiTypography-root.MuiTypography-body1.css-1699v82-MuiTypography-root')?.textContent;
             if (userPage === 'Profile') {
                 navigate('/profile')
@@ -267,11 +283,14 @@ function ResponsiveAppBar() {
                                     '& .MuiTooltip-tooltip': {
                                         fontSize: '20px', // Adjust font size here
                                         padding: '15px',
-                                        borderRadius: 2
+                                        borderRadius: 2,
+                                        display: 'flex',
+                                        flexDirection: 'column'
                                     },
                                 },
                             }}
                         >
+
                             <IconButton onClick={handleOpenUserMenu} sx={{
                                 p: 0,
                                 display: 'flex',
@@ -285,10 +304,22 @@ function ResponsiveAppBar() {
                                     display: 'block', // Make sure SVG is displayed as a block-level element
                                 },
                             }}>
-                                <PermIdentityIcon fontSize='large' sx={[pagesSX]} />
+
+                                <PermIdentityIcon
+                                    fontSize="large"
+                                    sx={[
+                                        pagesSX,
+                                        {
+                                            borderRadius: '50%', 
+                                            backgroundSize: 'cover',
+                                            backgroundImage: userCountryFlag ? `url(${userCountryFlag})` : 'none',
+                                        },
+                                    ]}
+                                />
+
                             </IconButton>
                         </Tooltip>
-                        {email &&
+                        {id &&
                             <Menu
                                 sx={{ mt: '45px' }}
                                 id="menu-appbar"
