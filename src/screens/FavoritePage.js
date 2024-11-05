@@ -245,7 +245,7 @@ const FavoritePage = () => {
                   <div className="country-Graph">
                     <CompGraph pop1={countries.pop1} gdp1={countries.gdp1} gdp2={countries.gdp2} pop2={countries.pop2} years={countries.years} />
                   </div>
-                  <button className="remove-btn" onClick={() => removeCompCountry(countries.id)}>
+                  <button className="remove-btn" onClick={() => removeCompCountry(countries)}>
                     <DeleteIcon fontSize="small" title="Remove Country" style={{ cursor: 'pointer' }} />
                   </button>
                 </div>
