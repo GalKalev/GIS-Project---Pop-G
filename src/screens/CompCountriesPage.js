@@ -98,7 +98,7 @@ const CompCountriesPage = () => {
             }
         } else {
             try {
-                const res = await dispatch(deleteCompareFavorite({userId: id, id:favoredCountriesId}))
+                const res = await dispatch(deleteCompareFavorite({ userId: id, id: favoredCountriesId }))
 
                 if (res.type === "/favorites/deleteCompare/fulfilled") {
                     dispatch(setComp(res.payload))
@@ -141,18 +141,6 @@ const CompCountriesPage = () => {
                 maxYear={maxYear}
                 minYear={minYear}
             />
-
-            {/* Render Map component by default */}
-            <div style={{ marginTop: '15px', width: '90%', height: '400px' }}>
-                <CompMap
-                    setSelectedCountry1={setSelectedCountry1}
-                    setSelectedCountry2={setSelectedCountry2}
-                    selectedCountry1={selectedCountry1}
-                    selectedCountry2={selectedCountry2}
-                    minYear={minYear}
-                    maxYear={maxYear}
-                />
-            </div>
 
             <Box sx={{
                 flex: 1,
@@ -224,6 +212,20 @@ const CompCountriesPage = () => {
                 }
 
             </Box>
+
+
+            {/* Render Map component by default */}
+            <div style={{ marginTop: '15px', width: '90%', height: '400px' }}>
+                <CompMap
+                    setSelectedCountry1={setSelectedCountry1}
+                    setSelectedCountry2={setSelectedCountry2}
+                    selectedCountry1={selectedCountry1}
+                    selectedCountry2={selectedCountry2}
+                    minYear={minYear}
+                    maxYear={maxYear}
+                />
+            </div>
+
         </main>
     );
 };
