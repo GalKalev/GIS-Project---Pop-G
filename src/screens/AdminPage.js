@@ -30,7 +30,6 @@ const AdminPage = () => {
 
             const blockedResponse = await axios.get(`${URL}admin/countries`);
             const blockedList = blockedResponse.data;
-            console.log(blockedList[0].country);
 
             setBlockedCountries(blockedList.sort());
             setFilteredBlockedCountries(blockedList.sort())
@@ -86,7 +85,6 @@ const AdminPage = () => {
     // Function to block a country and show its information
     const blockCountry = async (country) => {
         try {
-            console.log(country)
             const res = await axios.post(`${URL}admin/countries/add`, { country })
 
             if (res.status === 200) {
@@ -106,7 +104,6 @@ const AdminPage = () => {
 
     const unblockCountry = async (country) => {
         try {
-            console.log(country)
             const id = country.id
             const res = await axios.delete(`${URL}admin/countries/delete`, { params: { id } })
 
@@ -132,7 +129,7 @@ const AdminPage = () => {
             if (user.isAdmin) {
                 res = await axios.post(`${URL}admin/users/update`, { id: user.id, isAdmin: false })
             } else {
-                res = await axios.post(`${URL}admin/update`, { id: user.id, isAdmin: true })
+                res = await axios.post(`${URL}admin/users/update`, { id: user.id, isAdmin: true })
             }
             if (res.status === 200) {
                 dispatch(successful());
