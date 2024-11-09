@@ -243,7 +243,7 @@ const FavoritePage = () => {
                     <p>{countries.minYear} - {countries.maxYear}</p>
                   </div>
                   <div className="country-Graph">
-                    <CompGraph pop1={countries.pop1} gdp1={countries.gdp1} gdp2={countries.gdp2} pop2={countries.pop2} years={countries.years} />
+                    <CompGraph name1={countries.country1} name2={countries.country2} pop1={countries.pop1} gdp1={countries.gdp1} gdp2={countries.gdp2} pop2={countries.pop2} years={countries.years} />
                   </div>
                   <button className="remove-btn" onClick={() => removeCompCountry(countries)}>
                     <DeleteIcon fontSize="small" title="Remove Country" style={{ cursor: 'pointer' }} />

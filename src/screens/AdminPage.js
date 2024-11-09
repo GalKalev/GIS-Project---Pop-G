@@ -8,22 +8,25 @@ import { openModal, setMessage, successful, unsuccessful } from '../features/mod
 import { URL } from '../global/consts';
 import axios from 'axios';
 import { IconButton } from '@mui/material';
+import LoadingScreen from './LoadingScreen';
 
 
 const AdminPage = () => {
     const [countries, setCountries] = useState([]);
     const [users, setUsers] = useState([]);
     const [blockedCountries, setBlockedCountries] = useState([]);
-    const [selectedCountry, setSelectedCountry] = useState('')
     const [countrySearchQuery, setCountrySearchQuery] = useState('');
     const [userSearchQuery, setUserSearchQuery] = useState('');
     const [filteredCountries, setFilteredCountries] = useState([]);
     const [filteredBlockedCountries, setFilteredBlockedCountries] = useState([]);
 
+    const [isLoading, setIsLoading] = useState(false)
+
     const dispatch = useDispatch();
 
     const fetchCountries = async () => {
         try {
+            setIsLoading(true)
             const countriesList = await getCountriesList();
             const countriesName = countriesList.map(country => country.properties.NAME_EN);
             // setCountries(countriesName.sort()); 
@@ -50,6 +53,8 @@ const AdminPage = () => {
             }
         } catch (error) {
             console.error('Error fetching countries:', error);
+        }finally{
+            setIsLoading(false)
         }
     };
 
@@ -62,6 +67,7 @@ const AdminPage = () => {
 
     const loadUsers = async () => {
         try {
+            setIsLoading(true)
             const res = await axios.get(`${URL}admin/users`);
             if (res.status === 200) {
                 setUsers(res.data);
@@ -74,6 +80,8 @@ const AdminPage = () => {
             dispatch(unsuccessful());
             dispatch(setMessage('Fetching users failed. Please try again.'));
             dispatch(openModal());
+        }finally{
+            setIsLoading(false)
         }
 
     };
@@ -169,6 +177,14 @@ const AdminPage = () => {
     const handleUserSearchChange = (e) => {
         setUserSearchQuery(e.target.value);
     };
+
+    if(isLoading){
+        return (
+            <div style={{ padding: 10 }}>
+              <LoadingScreen />
+            </div>
+          )
+    }
 
     return (
         <div className="admin-container">
