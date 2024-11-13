@@ -20,6 +20,7 @@ import { userLogout } from '../features/user/userSlice';
 import { favoriteLogout } from '../features/favorites/favoritesSlice'
 import { persistor } from '../store';
 import axios from 'axios';
+import LogoutModal from './LogoutModal';
 
 
 // Pages style
@@ -47,6 +48,8 @@ function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const [userCountryFlag, setUserCountryFlag] = React.useState(null)
+
+    const [openLogoutModal, setOpenModalLogout] = React.useState(false)
 
     const { id, firstName, originCountry } = useSelector((store) => store.user)
 
@@ -104,6 +107,16 @@ function ResponsiveAppBar() {
 
     };
 
+    const handleLogout = () => {
+        console.log('User logged out.');
+        // localStorage.removeItem('authToken'); // Example: Clear authentication token
+        dispatch(userLogout())
+        dispatch(favoriteLogout())
+        persistor.purge()
+        setOpenModalLogout(false)
+        navigate('/', { replace: true }); // Redirect to home page
+    }
+
     const handleCloseUserMenu = (event) => {
         setAnchorElUser(null);
         if (id) {
@@ -111,15 +124,7 @@ function ResponsiveAppBar() {
             if (userPage === 'Profile') {
                 navigate('/profile')
             } else if (userPage === 'Logout') {
-                const confirmed = window.confirm('Are you sure you want to log out?');
-                if (confirmed) {
-                    console.log('User logged out.');
-                    // localStorage.removeItem('authToken'); // Example: Clear authentication token
-                    dispatch(userLogout())
-                    dispatch(favoriteLogout())
-                    persistor.purge()
-                    navigate('/', { replace: true }); // Redirect to home page
-                }
+                setOpenModalLogout(true)
             }
         }
 
@@ -346,6 +351,7 @@ function ResponsiveAppBar() {
                     </Box>
                 </Toolbar>
             </Container>
+            <LogoutModal open={openLogoutModal} setOpen={setOpenModalLogout} handleLogout={handleLogout}/>
         </AppBar>
     );
 }
