@@ -81,7 +81,7 @@ function ResponsiveAppBar() {
     React.useEffect(() => {
         if (originCountry) {
             getUserFlag()
-        }else{
+        } else {
             setUserCountryFlag(null)
         }
     }, [originCountry])
@@ -117,18 +117,16 @@ function ResponsiveAppBar() {
         navigate('/', { replace: true }); // Redirect to home page
     }
 
-    const handleCloseUserMenu = (event) => {
+
+    const handleCloseUserMenu = (setting) => {
         setAnchorElUser(null);
         if (id) {
-            const userPage = event.currentTarget.querySelector('.MuiTypography-root.MuiTypography-body1.css-1699v82-MuiTypography-root')?.textContent;
-            if (userPage === 'Profile') {
-                navigate('/profile')
-            } else if (userPage === 'Logout') {
-                setOpenModalLogout(true)
+            if (setting === 'Profile') {
+                navigate('/profile');
+            } else if (setting === 'Logout') {
+                setOpenModalLogout(true);
             }
         }
-
-
     };
 
     return (
@@ -315,7 +313,7 @@ function ResponsiveAppBar() {
                                     sx={[
                                         pagesSX,
                                         {
-                                            borderRadius: '50%', 
+                                            borderRadius: '50%',
                                             backgroundSize: 'cover',
                                             backgroundImage: userCountryFlag ? `url(${userCountryFlag})` : 'none',
                                         },
@@ -342,7 +340,7 @@ function ResponsiveAppBar() {
                                 onClose={handleCloseUserMenu}
                             >
                                 {settings.map((setting) => (
-                                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                    <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
                                         <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
                                     </MenuItem>
                                 ))}
@@ -351,7 +349,7 @@ function ResponsiveAppBar() {
                     </Box>
                 </Toolbar>
             </Container>
-            <LogoutModal open={openLogoutModal} setOpen={setOpenModalLogout} handleLogout={handleLogout}/>
+            <LogoutModal open={openLogoutModal} setOpen={setOpenModalLogout} handleLogout={handleLogout} />
         </AppBar>
     );
 }
