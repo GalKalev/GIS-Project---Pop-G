@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate for naviga
 import '../styles/ProfileForm.css';
 import EditIcon from '@mui/icons-material/Edit';
 import ArrowRightSharpIcon from '@mui/icons-material/ArrowRightSharp';
-import AdminPage from '../screens/AdminPage'; // Adjust the path based on your folder structure
 import { AdminIcon } from '../global/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { setEmail, setFirstName, setLastName, setOriginCountry, setPhone, userInfo, userLogout } from '../features/user/userSlice';
@@ -11,6 +10,7 @@ import { favoriteLogout } from '../features/favorites/favoritesSlice';
 import _ from 'lodash';
 import { getCountriesList } from '../global/consts';
 import { persistor } from '../store';
+import LogoutModal from './LogoutModal';
 
 const ProfileForm = () => {
   const navigate = useNavigate(); // Hook for navigation
@@ -33,6 +33,8 @@ const ProfileForm = () => {
   const [errorMessage, setErrorMessage] = useState([]);
 
   const [countries, setCountries] = useState([])
+
+  const [openLogoutModal, setOpenModalLogout] = React.useState(false)
 
   const dispatch = useDispatch();
 
@@ -111,15 +113,19 @@ const ProfileForm = () => {
     setEditedValue(e.target.value);
   };
 
+  
+  const handleLogout = () => {
+    console.log('User logged out.');
+    // localStorage.removeItem('authToken'); // Example: Clear authentication token
+    dispatch(userLogout())
+    dispatch(favoriteLogout())
+    persistor.purge()
+    setOpenModalLogout(false)
+    navigate('/', { replace: true }); // Redirect to home page
+}
+
   const handleLogoutClick = () => {
-    const confirmed = window.confirm('Are you sure you want to log out?');
-    if (confirmed) {
-      console.log('User logged out.');
-      dispatch(userLogout())
-      dispatch(favoriteLogout())
-      persistor.purge()
-      navigate('/', { replace: true }); // Redirect to home page
-    }
+    setOpenModalLogout(true)
   };
 
   const handleFavoriteClick = () => {
@@ -228,6 +234,8 @@ const ProfileForm = () => {
           Log Out
         </button>
       </div>
+      <LogoutModal open={openLogoutModal} setOpen={setOpenModalLogout} handleLogout={handleLogout}/>
+
     </div>
   );
 };

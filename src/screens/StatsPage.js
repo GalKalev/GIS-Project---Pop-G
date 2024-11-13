@@ -30,7 +30,6 @@ const StatsPage = () => {
         setIsLoading(true)
         const countries = await getCountriesList();
         const blockedCountriesResponse = await axios.get(`${URL}admin/countries`);
-        console.log(blockedCountriesResponse);
         const blockedCountries = blockedCountriesResponse.data.map(item => item.country);
 
         // Format the countries
