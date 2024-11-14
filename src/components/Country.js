@@ -28,7 +28,7 @@ const Country = () => {
 
     const yearToday = new Date();
     const [minYear, setMinYear] = useState(1960);
-    const [maxYear, setMaxYear] = useState(yearToday.getFullYear());
+    const [maxYear, setMaxYear] = useState(yearToday.getFullYear() - 1);
 
     const [isFavored, setIsFavored] = useState(false)
     const [favoredCountryId, setFavoredCountryId] = useState(null)
