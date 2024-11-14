@@ -76,7 +76,7 @@ const CountryMap = ({ geoData, setSelectedCountry1, selectedCountry1, setSelecte
     map.setView(position.current, map.getZoom());
 
     // Handle country 1 selection
-    if (!previousLayer1.current && !selectedLayerRef1.current) {
+    if (!previousLayer1.current && !selectedLayerRef1.current && clickedLayer !== selectedLayerRef2.current  ) {
       selectedLayerRef1.current = clickedLayer;
       previousLayer1.current = clickedLayer;
       clickedLayer.setStyle({
