@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
     Label
 } from 'recharts';
+import { Typography } from '@mui/material';
 
 // Function to format large numbers
 const formatNumber = (number) => {
@@ -22,6 +23,7 @@ const formatNumber = (number) => {
 };
 
 export default function CompGraph({ years, pop1, gdp1, pop2, gdp2, name1, name2 }) {
+    const [isNullValues, setIsNullValues] = useState(false)
     // Structure the data for the chart
     const data = years.map((year, index) => ({
         year,
@@ -30,6 +32,15 @@ export default function CompGraph({ years, pop1, gdp1, pop2, gdp2, name1, name2 
         [`Population ${name2}`]: pop2[index],
         [`GDP ${name2}`]: gdp2[index],
     }));
+
+    useEffect(() => {
+        if (pop1.includes(null) || gdp1.includes(null) || pop2.includes(null) || gdp2.includes(null)) {
+            setIsNullValues(true)
+        } else {
+            setIsNullValues(false)
+        }
+
+    }, [pop1, gdp1,pop2, gdp2, years])
 
     return (
         <div style={{ width: '100%', height: '100%', maxWidth: '1000px', maxHeight: '500px' }}>
@@ -68,7 +79,7 @@ export default function CompGraph({ years, pop1, gdp1, pop2, gdp2, name1, name2 
                     stroke="#82ca9d"
                     tickFormatter={formatNumber} // Apply formatting
                 >
-                     <Label
+                    <Label
                         value="GDP"
                         angle={0}
                         position="top"
@@ -83,6 +94,9 @@ export default function CompGraph({ years, pop1, gdp1, pop2, gdp2, name1, name2 
                 <Bar yAxisId="left" dataKey={`Population ${name2}`} fill="#ff7300" />
                 <Bar yAxisId="right" dataKey={`GDP ${name2}`} fill="#ffc658" />
             </BarChart>
+            {isNullValues && <Typography variant='p' sx={{ color: 'red', display:'flex', alignItems:'center', justifyContent:'center', paddingRight:12}}>
+                Some of the values are missing :(
+            </Typography>}
         </div>
     );
 }

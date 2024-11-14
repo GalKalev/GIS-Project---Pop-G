@@ -1,4 +1,5 @@
-import React from 'react';
+import { Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend
 } from 'recharts';
@@ -21,11 +22,21 @@ const formatNumber = (number) => {
 };
 
 export default function Graph({ years = [], pop = [], gdp = [], isMapShrunken }) {
+  const [isNullValues, setIsNullValues] = useState(false)
   const data = years.map((year, index) => ({
     year,
     Population: pop[index],
     GDP: gdp[index],
   }));
+
+  useEffect(() => {
+    if (pop.includes(null) || gdp.includes(null)) {
+      setIsNullValues(true)
+  }else{
+    setIsNullValues(false)
+  }
+
+  },[pop, gdp, years])
 
   return (
      <div style={{ width: '100%', height: '100%', maxWidth: '1000px', maxHeight: '500px' }}>
@@ -58,6 +69,9 @@ export default function Graph({ years = [], pop = [], gdp = [], isMapShrunken })
         <Bar yAxisId="left" dataKey="Population" fill="#8884d8" />
         <Bar yAxisId="right" dataKey="GDP" fill="#82ca9d" />
       </BarChart>
+      {isNullValues && <Typography variant='p' sx={{color:'red'}}>
+        Some of the values are missing :(
+        </Typography>}
     </div>
   );
 }
